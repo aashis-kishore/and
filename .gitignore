@@ -1,0 +1,12 @@
+## Files
+Makefile
+*.make
+
+## Directories
+.vscode
+build
+obj
+dependencies
+# ignore every "un-excluded" sub-directory under dev_dependencies
+dev_dependencies/*
+!dev_dependencies/check
