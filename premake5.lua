@@ -8,6 +8,10 @@ dofile("./dev_support/print_messages/print_messages.lua")
 dofile("./tests/dev_support/test_print_messages/test_print_messages.lua")
 
 
+-- src projects tests
+dofile("./tests/src/test_static_stack/test_static_stack.lua")
+
+
 newaction {
     trigger = "clean",
     description = "remove all generated directories from the root directory",
