@@ -18,8 +18,8 @@ typedef enum {
 } SSTK_BOOL;
 
 sstackptr_t sstk_create(size_t, size_t);
-SSTK_BOOL sstk_isEmpty(sstackptr_t);
-SSTK_BOOL sstk_isFull(sstackptr_t);
+int8_t sstk_isEmpty(sstackptr_t);
+int8_t sstk_isFull(sstackptr_t);
 int8_t sstk_push(sstackptr_t, void*, size_t);
 void* sstk_pop(sstackptr_t, SSTK_BOOL);
 int8_t sstk_destroy(sstackptr_t, SSTK_BOOL);
