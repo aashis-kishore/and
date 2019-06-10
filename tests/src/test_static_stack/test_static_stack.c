@@ -55,6 +55,59 @@ Suite* sstk_create_suite(void) {
 // =========================================================================================
 
 
+// ========================================================================================= [sstk_isEmpty(sstackptr_t)]
+// test: sstk_isEmpty(NULL)
+START_TEST(test_sstk_isEmpty__args__NULL) {
+    int8_t is_empty_stat = sstk_isEmpty(NULL);
+    ck_assert_int_eq(is_empty_stat, SSTK_NOK);
+} END_TEST
+
+// test: sstk_isEmpty(sstk)
+START_TEST(test_sstk_isEmpty__args__empty_sstk) {
+    sstackptr_t empty_sstk = sstk_create(SSTK_DEFAULT_SIZE, sizeof(int));
+    int8_t is_empty_stat = sstk_isEmpty(empty_sstk);
+    ck_assert_int_eq(is_empty_stat, SSTK_TRUE);
+} END_TEST
+
+START_TEST(test_sstk_isEmpty__args__nempty_sstk) {
+    sstackptr_t nempty_sstk = sstk_create(3, sizeof(int));
+
+    int elmnt = 12;
+    sstk_push(nempty_sstk, &elmnt, 0);
+        
+    int8_t is_nempty_stat = sstk_isEmpty(nempty_sstk);
+    ck_assert_int_eq(is_nempty_stat, SSTK_TRUE);
+} END_TEST;
+
+
+Suite* sstk_isEmpty_suite(void) {
+    Suite* suite;
+    TCase *tc_error, *tc_empty, *tc_nempty;
+
+    suite = suite_create("IsEmpty");
+
+    tc_error = tcase_create("Error");
+    tcase_set_tags(tc_error, "ERROR");
+    tcase_add_test(tc_error, test_sstk_isEmpty__args__NULL);
+
+    tc_empty = tcase_create("Empty");
+    tcase_set_tags(tc_empty, "EMPTY");
+    tcase_add_test(tc_empty, test_sstk_isEmpty__args__empty_sstk);
+    
+    tc_nempty = tcase_create("Not Empty");
+    tcase_set_tags(tc_nempty, "NEMPTY");
+    tcase_add_test(tc_nempty, test_sstk_isEmpty__args__nempty_sstk);
+
+    suite_add_tcase(suite, tc_error);
+    suite_add_tcase(suite, tc_empty);
+    suite_add_tcase(suite, tc_nempty);
+
+    return suite;
+}
+
+// =========================================================================================
+
+
 // ========================================================================================= [sstk_destroy(sstackptr_t, SSTK_BOOL)]
 // CASE: UNDEFINED STACK
 // test: stk_destroy(NULL, SSTK_FALSE)
@@ -126,13 +179,14 @@ int main(void) {
     
     SRunner* suite_runner = srunner_create(sstk_create_suite());
     srunner_add_suite(suite_runner, sstk_destroy_suite());
+    srunner_add_suite(suite_runner, sstk_isEmpty_suite());
 
     // srunner_run_all(suite_runner, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Create", NULL, NULL, NULL, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, NULL, CK_NORMAL);
-    srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, "SKIP", CK_NORMAL);
-
-
+    // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, "SKIP", CK_NORMAL);
+    srunner_run_tagged(suite_runner, "IsEmpty", NULL, NULL, "NEMPTY", CK_NORMAL);
+    
     num_tests_failed = srunner_ntests_failed(suite_runner);
     srunner_free(suite_runner);
 
