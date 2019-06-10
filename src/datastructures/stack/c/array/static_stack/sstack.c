@@ -50,6 +50,15 @@ int8_t sstk_isEmpty(sstackptr_t sstk) {
     return sstk->empty;
 }
 
+int8_t sstk_isFull(sstackptr_t sstk) {
+    if (!sstk) {
+        DTALGM_PRINT_ERR("sstk_isFull", "Invalid address as argument")
+        return SSTK_NOK;
+    }
+
+    return (sstk->top == sstk->num_elmnts-1) ? SSTK_TRUE : SSTK_FALSE;
+}
+
 int8_t sstk_destroy(sstackptr_t sstk, SSTK_BOOL mem_allocd_elmnt) {
     if (!sstk) {
         DTALGM_PRINT_ERR("sstk_destroy", "Invalid address as argument")
