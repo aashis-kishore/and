@@ -2,7 +2,7 @@ project "test_print_messages"
     kind "ConsoleApp"
     language "C"
     objdir "%{wks.location}/obj/tests/dev_support/%{prj.name}"
-    targetdir "%{wks.location}/build/tests/dev_support/%{prj.name}/"
+    targetdir "%{wks.location}/build/%{cfg.buildcfg}/tests/%{prj.name}"
 
     defines {
         "DEBUG"
