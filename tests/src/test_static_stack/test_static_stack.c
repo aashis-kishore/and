@@ -234,9 +234,9 @@ int main(void) {
     int num_tests_failed;
     
     SRunner* suite_runner = srunner_create(sstk_create_suite());
+    srunner_add_suite(suite_runner, sstk_isEmpty_suite());
     srunner_add_suite(suite_runner, sstk_isFull_suite());
     srunner_add_suite(suite_runner, sstk_destroy_suite());
-    srunner_add_suite(suite_runner, sstk_isEmpty_suite());
 
     // srunner_run_all(suite_runner, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Create", NULL, NULL, NULL, CK_NORMAL);
