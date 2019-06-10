@@ -55,6 +55,62 @@ Suite* sstk_create_suite(void) {
 // =========================================================================================
 
 
+// ========================================================================================= [sstk_isFull(sstackptr_t)]
+// test: sstk_isFull(NULL)
+START_TEST(test_sstk_isFull__args__NULL) {
+    int8_t is_full_stat = sstk_isFull(NULL);
+    ck_assert_int_eq(is_full_stat, SSTK_NOK);
+} END_TEST
+
+//test: sstk_isFull(full_sstk)
+START_TEST(test_sstk_isFull__args__full_sstk) {
+    sstackptr_t full_sstk = sstk_create(3, sizeof(int));
+    for (int i=1; i<=3; i++)
+        sstk_push(full_sstk, &i, 0);
+    
+    int8_t is_full_stat = sstk_isFull(full_sstk);
+    ck_assert_int_eq(is_full_stat, SSTK_TRUE);
+} END_TEST
+
+//test: sstk_isFull(nfull_sstk)
+START_TEST(test_sstk_isFull__args__nfull_sstk) {
+    sstackptr_t nfull_sstk = sstk_create(0, sizeof(int));
+    int elmnt = 12;
+    sstk_push(nfull_sstk, &elmnt, 0);
+
+    int8_t is_full_stat = sstk_isFull(nfull_sstk);
+    ck_assert_int_eq(is_full_stat, SSTK_FALSE);
+} END_TEST
+
+
+Suite* sstk_isFull_suite(void) {
+    Suite* suite;
+    TCase *tc_error, *tc_full, *tc_nfull;
+
+    suite = suite_create("IsFull");
+
+    tc_error = tcase_create("Error");
+    tcase_set_tags(tc_error, "ERROR");
+    tcase_add_test(tc_error, test_sstk_isFull__args__NULL);
+
+    tc_full = tcase_create("Full");
+    tcase_set_tags(tc_full, "FULL");
+    tcase_add_test(tc_full, test_sstk_isFull__args__full_sstk);
+    
+    tc_nfull = tcase_create("Not Full");
+    tcase_set_tags(tc_nfull, "NFULL");
+    tcase_add_test(tc_nfull, test_sstk_isFull__args__nfull_sstk);
+
+    suite_add_tcase(suite, tc_error);
+    suite_add_tcase(suite, tc_full);
+    suite_add_tcase(suite, tc_full);
+
+    return suite;
+}
+
+// =========================================================================================
+
+
 // ========================================================================================= [sstk_isEmpty(sstackptr_t)]
 // test: sstk_isEmpty(NULL)
 START_TEST(test_sstk_isEmpty__args__NULL) {
@@ -178,6 +234,7 @@ int main(void) {
     int num_tests_failed;
     
     SRunner* suite_runner = srunner_create(sstk_create_suite());
+    srunner_add_suite(suite_runner, sstk_isFull_suite());
     srunner_add_suite(suite_runner, sstk_destroy_suite());
     srunner_add_suite(suite_runner, sstk_isEmpty_suite());
 
@@ -185,7 +242,8 @@ int main(void) {
     // srunner_run_tagged(suite_runner, "Create", NULL, NULL, NULL, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, NULL, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, "SKIP", CK_NORMAL);
-    srunner_run_tagged(suite_runner, "IsEmpty", NULL, NULL, "NEMPTY", CK_NORMAL);
+    // srunner_run_tagged(suite_runner, "IsEmpty", NULL, NULL, "NEMPTY", CK_NORMAL);
+    srunner_run_tagged(suite_runner, "IsFull", NULL, NULL, "FULL NFULL", CK_NORMAL);
     
     num_tests_failed = srunner_ntests_failed(suite_runner);
     srunner_free(suite_runner);
