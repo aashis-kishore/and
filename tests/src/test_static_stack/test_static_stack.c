@@ -336,16 +336,11 @@ START_TEST(test_sstk_destroy__args__NULL__SSTK_TRUE) {
 } END_TEST
 
 
-// CASE: DEFINED STACK
-sstackptr_t sstk;
-void setup__sstk_destroy__defined_stack(void) {
-sstk = sstk_create(0, sizeof(int*));
-}    
-
+// CASE: DEFINED STACK   
 // test: sstk_destroy(sstk, SSTK_FALSE)
 START_TEST(test_sstk_destroy__args_sstk__SSTK_FALSE) {
-    // sstackptr_t sstk = sstk_create(0, sizeof(int));
-    // ck_assert_ptr_nonnull(sstk);
+    sstackptr_t sstk = sstk_create(0, sizeof(int));
+    ck_assert_ptr_nonnull(sstk);
 
     int8_t destroy_stat = sstk_destroy(sstk, SSTK_FALSE);
     ck_assert_int_eq(destroy_stat, SSTK_OK);
@@ -353,8 +348,8 @@ START_TEST(test_sstk_destroy__args_sstk__SSTK_FALSE) {
 
 // test: sstk_destroy(sstk, SSTK_TRUE)
 START_TEST(test_sstk_destroy__args_sstk__SSTK_TRUE) {
-    // sstackptr_t sstk = sstk_create(0, sizeof(int));
-    // ck_assert_ptr_nonnull(sstk);
+    sstackptr_t sstk = sstk_create(0, sizeof(int));
+    ck_assert_ptr_nonnull(sstk);
 
     int8_t destroy_stat = sstk_destroy(sstk, SSTK_TRUE);
     ck_assert_int_eq(destroy_stat, SSTK_OK);
@@ -374,7 +369,6 @@ Suite* sstk_destroy_suite(void) {
 
     tc_defined_stack = tcase_create("Defined Stack");
     tcase_set_tags(tc_defined_stack, "SKIP");
-    tcase_add_checked_fixture(tc_defined_stack, setup__sstk_destroy__defined_stack, NULL);
     tcase_add_test(tc_defined_stack, test_sstk_destroy__args_sstk__SSTK_FALSE);
     tcase_add_test(tc_defined_stack, test_sstk_destroy__args_sstk__SSTK_TRUE);
 
