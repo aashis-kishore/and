@@ -425,13 +425,6 @@ int main(int argc, char** argv) {
     } else if (argc >= 2) {
         srunner_run_tagged(suite_runner, argv[1], NULL, NULL, NULL, CK_NORMAL);
     }
-
-    // srunner_run_tagged(suite_runner, "Create", NULL, NULL, NULL, CK_NORMAL);
-    // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, NULL, CK_NORMAL);
-    // srunner_run_tagged(suite_runner, "IsEmpty", NULL, NULL, NULL, CK_NORMAL);
-    // srunner_run_tagged(suite_runner, "IsFull", NULL, NULL, NULL, CK_NORMAL);
-    // srunner_run_tagged(suite_runner, "Push", NULL, NULL, NULL, CK_NORMAL);
-    // srunner_run_tagged(suite_runner, "Pop", NULL, NULL, NULL, CK_NORMAL);
     
     num_tests_failed = srunner_ntests_failed(suite_runner);
     srunner_free(suite_runner);
