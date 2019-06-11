@@ -59,6 +59,53 @@ int8_t sstk_isFull(sstackptr_t sstk) {
     return (sstk->top == sstk->num_elmnts-1) ? SSTK_TRUE : SSTK_FALSE;
 }
 
+int8_t sstk_push(sstackptr_t sstk, void* elmnt, size_t elmnt_size) {
+    if (!sstk || !elmnt) {
+        DTALGM_PRINT_ERR("sstk_push", "Invalid address as argument")
+        return SSTK_NOK;
+    }
+
+    if (sstk_isFull(sstk)) {
+        DTALGM_PRINT_ERR("sstk_push", "Unable to perform push, stack is full.")
+        return SSTK_NOK;
+    }
+
+    if (!(sstk->empty == SSTK_TRUE))
+        sstk->top++;
+    else
+        sstk->empty = SSTK_FALSE;
+        
+
+    if (elmnt_size) {
+        void* elmnt_cpy = malloc(elmnt_size);
+
+        if (!elmnt_cpy) {
+            DTALGM_PRINT_ERR("sstk_push", "Memory allocation for element copy failed")
+            return SSTK_NOK;
+        }
+        
+        void* memcpy_stat = memcpy(elmnt_cpy, elmnt, elmnt_size);
+
+        if (!memcpy_stat) {
+            DTALGM_PRINT_ERR("sstk_push", "Copying of element to permanent location failed")
+            return SSTK_NOK;
+        }
+
+        elmnt = elmnt_cpy;
+    }
+
+    void* elmnt_insrt_addr = (int8_t*)sstk->buffer + sstk->top*sstk->elmnt_size;
+
+    void* memcpy_stat = memcpy(elmnt_insrt_addr, elmnt, sstk->elmnt_size);
+
+    if (!memcpy_stat) {
+        DTALGM_PRINT_ERR("sstk_push", "Unable to copy element to stack")
+        return SSTK_NOK;
+    }
+
+    return SSTK_OK;
+}
+
 int8_t sstk_destroy(sstackptr_t sstk, SSTK_BOOL mem_allocd_elmnt) {
     if (!sstk) {
         DTALGM_PRINT_ERR("sstk_destroy", "Invalid address as argument")
