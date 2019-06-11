@@ -137,10 +137,27 @@ START_TEST(test_sstk_isEmpty__args__nempty_sstk) {
     ck_assert_int_eq(is_nempty_stat, SSTK_FALSE);
 } END_TEST;
 
+// test: sstk_isEmpty(full_then_empty_sstk)
+START_TEST(test_sstk_isEmpty__args__full_then_empty_sstk) {
+    sstackptr_t full_then_empty_sstk = sstk_create(3, sizeof(int));
+
+    for (int i=1; i<=3; i++)
+        sstk_push(full_then_empty_sstk, &i, 0);
+
+    sstk_pop(full_then_empty_sstk, SSTK_FALSE);
+    sstk_pop(full_then_empty_sstk, SSTK_FALSE);
+    sstk_pop(full_then_empty_sstk, SSTK_FALSE);
+
+    int8_t is_empty_stat = sstk_isEmpty(full_then_empty_sstk);
+
+    ck_assert_int_eq(is_empty_stat, SSTK_TRUE);
+    sstk_destroy(full_then_empty_sstk, SSTK_FALSE);
+} END_TEST
+
 
 Suite* sstk_isEmpty_suite(void) {
     Suite* suite;
-    TCase *tc_error, *tc_empty, *tc_nempty;
+    TCase *tc_error, *tc_empty, *tc_nempty, *tc_full_then_empty;
 
     suite = suite_create("IsEmpty");
 
@@ -156,9 +173,13 @@ Suite* sstk_isEmpty_suite(void) {
     tcase_set_tags(tc_nempty, "NEMPTY");
     tcase_add_test(tc_nempty, test_sstk_isEmpty__args__nempty_sstk);
 
+    tc_full_then_empty = tcase_create("Full Then Empty");
+    tcase_add_test(tc_full_then_empty, test_sstk_isEmpty__args__full_then_empty_sstk);
+
     suite_add_tcase(suite, tc_error);
     suite_add_tcase(suite, tc_empty);
     suite_add_tcase(suite, tc_nempty);
+    suite_add_tcase(suite, tc_full_then_empty);
 
     return suite;
 }
