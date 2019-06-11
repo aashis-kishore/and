@@ -16,6 +16,7 @@ START_TEST(test_sstk_create__args__0__0) {
 START_TEST(test_sstk_create__args__0__sizeof_int) {
     sstackptr_t sstk = sstk_create(0, sizeof(int));
     ck_assert_ptr_nonnull(sstk);
+    sstk_destroy(sstk, SSTK_FALSE);
 } END_TEST
 
 
@@ -30,6 +31,7 @@ START_TEST(test_sstk_create__args_12__0) {
 START_TEST(test_sstk_create__args_12__sizeof_int) {
     sstackptr_t sstk = sstk_create(12, sizeof(int));
     ck_assert_ptr_nonnull(sstk);
+    sstk_destroy(sstk, SSTK_FALSE);
 } END_TEST
 
 
@@ -71,6 +73,7 @@ START_TEST(test_sstk_isFull__args__full_sstk) {
     
     int8_t is_full_stat = sstk_isFull(full_sstk);
     ck_assert_int_eq(is_full_stat, SSTK_TRUE);
+    sstk_destroy(full_sstk, SSTK_FALSE);
 } END_TEST
 
 //test: sstk_isFull(nfull_sstk)
@@ -81,6 +84,7 @@ START_TEST(test_sstk_isFull__args__nfull_sstk) {
 
     int8_t is_full_stat = sstk_isFull(nfull_sstk);
     ck_assert_int_eq(is_full_stat, SSTK_FALSE);
+    sstk_destroy(nfull_sstk, SSTK_FALSE);
 } END_TEST
 
 
@@ -124,6 +128,7 @@ START_TEST(test_sstk_isEmpty__args__empty_sstk) {
     sstackptr_t empty_sstk = sstk_create(SSTK_DEFAULT_SIZE, sizeof(int));
     int8_t is_empty_stat = sstk_isEmpty(empty_sstk);
     ck_assert_int_eq(is_empty_stat, SSTK_TRUE);
+    sstk_destroy(empty_sstk, SSTK_FALSE);
 } END_TEST
 
 // test: sstk_isEmpty(nempty_sstk)
@@ -135,6 +140,7 @@ START_TEST(test_sstk_isEmpty__args__nempty_sstk) {
         
     int8_t is_nempty_stat = sstk_isEmpty(nempty_sstk);
     ck_assert_int_eq(is_nempty_stat, SSTK_FALSE);
+    sstk_destroy(nempty_sstk, SSTK_FALSE);
 } END_TEST;
 
 // test: sstk_isEmpty(full_then_empty_sstk)
@@ -416,7 +422,7 @@ int main(void) {
     srunner_add_suite(suite_runner, sstk_pop_suite());
     srunner_add_suite(suite_runner, sstk_destroy_suite());
 
-    // srunner_run_all(suite_runner, CK_NORMAL);
+    srunner_run_all(suite_runner, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Create", NULL, NULL, NULL, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, NULL, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "IsEmpty", NULL, NULL, NULL, CK_NORMAL);
