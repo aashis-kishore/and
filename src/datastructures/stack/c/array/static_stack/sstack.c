@@ -112,7 +112,7 @@ void* sstk_pop(sstackptr_t sstk, SSTK_BOOL mem_allocd_elmnt) {
         return SSTK_PNOK;
     }
 
-    if (sstk_isEmpty(sstk)) {
+    if ((sstk->empty & SSTK_TRUE) == SSTK_TRUE) {
         DTALGM_PRINT_ERR("sstk_pop", "Unable to perform pop, stack is empty")
         return SSTK_PNOK;
     }
