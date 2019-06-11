@@ -25,6 +25,7 @@ int8_t sstk_isEmpty(sstackptr_t);
 int8_t sstk_isFull(sstackptr_t);
 int8_t sstk_push(sstackptr_t, void*, size_t);
 void* sstk_pop(sstackptr_t, SSTK_BOOL);
+void* sstk_peek(sstackptr_t, size_t);
 int8_t sstk_destroy(sstackptr_t, SSTK_BOOL);
 
 #endif
