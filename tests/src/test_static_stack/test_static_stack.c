@@ -308,7 +308,7 @@ START_TEST(test_sstk_pop__args__sstk__SSTK_FALSE) {
     void* popped_elmnt = sstk_pop(sstk, SSTK_FALSE);
 
     ck_assert_ptr_nonnull(popped_elmnt);
-    ck_assert_int_eq(*((int*)popped_elmnt), 12);
+    ck_assert_int_eq(sstk_getElement(popped_elmnt, int), 12);
     sstk_destroy(sstk, SSTK_FALSE);
 } END_TEST
 
@@ -321,7 +321,7 @@ START_TEST(test_sstk_pop__args__sstk__SSTK_TRUE) {
     void* popped_elmnt = sstk_pop(sstk, SSTK_TRUE);
 
     ck_assert_ptr_nonnull(popped_elmnt);
-    ck_assert_str_eq((char*)popped_elmnt, elmnt);
+    ck_assert_str_eq(sstk_getElement(popped_elmnt, char*), elmnt);
     sstk_destroy(sstk, SSTK_TRUE);
 } END_TEST
 
