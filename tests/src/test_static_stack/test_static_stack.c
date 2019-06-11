@@ -1,5 +1,6 @@
 #include <check.h>
 #include <stdint.h>
+#include <string.h>
 #include <sstack.h>
 
 
@@ -164,6 +165,99 @@ Suite* sstk_isEmpty_suite(void) {
 // =========================================================================================
 
 
+// ========================================================================================= [sstk_push(sstackptr_t, void*, size_t)]
+//test: sstk_push(NULL, NULL, 0)
+START_TEST(test_sstk_push__args__NULL__NULL__0) {
+    int8_t push_stat = sstk_push(NULL, NULL, 0);
+    ck_assert_int_eq(push_stat, SSTK_NOK);
+} END_TEST
+
+// test: sstk_push(NULL, NULL, sizeof(char*))
+START_TEST(test_sstk_push__args__NULL__NULL__sizeof_int_ptr) {
+    int8_t push_stat = sstk_push(NULL, NULL, sizeof(char*));
+    ck_assert_int_eq(push_stat, SSTK_NOK);
+} END_TEST
+
+// test: sstk_push(NULL, elmnt, 0)
+START_TEST(test_sstk_push__args__NULL__elmnt__0) {
+    int elmnt = 12;
+    int8_t push_stat = sstk_push(NULL, &elmnt, 0);
+    ck_assert_int_eq(push_stat, SSTK_NOK);
+} END_TEST
+
+// test: sstk_push(NULL, elmnt, sizeof(char*))
+START_TEST(test_sstk_push__args__NULL__elmnt__sizeof_int_ptr) {
+    int elmnt = 12;
+    int8_t push_stat = sstk_push(NULL, &elmnt, sizeof(char*));
+    ck_assert_int_eq(push_stat, SSTK_NOK);
+} END_TEST
+
+// test: sstk_push(sstk, NULL, 0)
+START_TEST(test_sstk_push__args__sstk__NULL__0) {
+    sstackptr_t sstk = sstk_create(SSTK_DEFAULT_SIZE, sizeof(int));
+    int elmnt = 12;
+    int8_t push_stat = sstk_push(sstk, NULL, 0);
+    ck_assert_int_eq(push_stat, SSTK_NOK);
+    sstk_destroy(sstk, SSTK_FALSE);
+} END_TEST
+
+// test: sstk_push(sstk, NULL, sizeof(char*))
+START_TEST(test_sstk_push__args__sstk__NULL__sizeof_int_ptr) {
+    sstackptr_t sstk = sstk_create(SSTK_DEFAULT_SIZE, sizeof(int));
+    int elmnt = 12;
+    int8_t push_stat = sstk_push(sstk, NULL, sizeof(char*));
+    ck_assert_int_eq(push_stat, SSTK_NOK);
+    sstk_destroy(sstk, SSTK_FALSE);
+} END_TEST
+
+// test: sstk_push(sstk, elmnt, 0)
+START_TEST(test_sstk_push__args__sstk__elmnt__0) {
+    sstackptr_t sstk = sstk_create(SSTK_DEFAULT_SIZE, sizeof(int));
+    int elmnt = 12;
+    int8_t push_stat = sstk_push(sstk, &elmnt, 0);
+    ck_assert_int_eq(push_stat, SSTK_OK);
+    sstk_destroy(sstk, SSTK_FALSE);
+} END_TEST
+
+// test: sstk_push(sstk, elmnt, sizeof(char*))
+START_TEST(test_sstk_push__args__sstk__elmnt__sizeof_int_ptr) {
+    sstackptr_t sstk = sstk_create(SSTK_DEFAULT_SIZE, sizeof(char*));
+    char elmnt[] = "test string";
+
+    int8_t push_stat = sstk_push(sstk, elmnt, strlen(elmnt)+1);
+    ck_assert_int_eq(push_stat, SSTK_OK);
+    sstk_destroy(sstk, SSTK_TRUE);
+} END_TEST
+
+
+Suite* sstk_push_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("Push");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_sstk_push__args__NULL__NULL__0);
+    tcase_add_test(tc_failure, test_sstk_push__args__NULL__NULL__sizeof_int_ptr);
+    tcase_add_test(tc_failure, test_sstk_push__args__NULL__elmnt__0);
+    tcase_add_test(tc_failure, test_sstk_push__args__NULL__elmnt__sizeof_int_ptr);
+    tcase_add_test(tc_failure, test_sstk_push__args__sstk__NULL__0);
+    tcase_add_test(tc_failure, test_sstk_push__args__sstk__NULL__sizeof_int_ptr);
+
+    tc_success = tcase_create("Success");
+    tcase_set_tags(tc_success, "SUCCESS");
+    tcase_add_test(tc_success, test_sstk_push__args__sstk__elmnt__0);
+    tcase_add_test(tc_success, test_sstk_push__args__sstk__elmnt__sizeof_int_ptr);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// =========================================================================================
+
+
 // ========================================================================================= [sstk_destroy(sstackptr_t, SSTK_BOOL)]
 // CASE: UNDEFINED STACK
 // test: stk_destroy(NULL, SSTK_FALSE)
@@ -236,6 +330,7 @@ int main(void) {
     SRunner* suite_runner = srunner_create(sstk_create_suite());
     srunner_add_suite(suite_runner, sstk_isEmpty_suite());
     srunner_add_suite(suite_runner, sstk_isFull_suite());
+    srunner_add_suite(suite_runner, sstk_push_suite());
     srunner_add_suite(suite_runner, sstk_destroy_suite());
 
     // srunner_run_all(suite_runner, CK_NORMAL);
@@ -243,7 +338,8 @@ int main(void) {
     // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, NULL, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, "SKIP", CK_NORMAL);
     // srunner_run_tagged(suite_runner, "IsEmpty", NULL, NULL, "NEMPTY", CK_NORMAL);
-    srunner_run_tagged(suite_runner, "IsFull", NULL, NULL, "FULL NFULL", CK_NORMAL);
+    // srunner_run_tagged(suite_runner, "IsFull", NULL, NULL, "FULL NFULL", CK_NORMAL);
+    srunner_run_tagged(suite_runner, "Push", NULL, NULL, NULL, CK_NORMAL);
     
     num_tests_failed = srunner_ntests_failed(suite_runner);
     srunner_free(suite_runner);
