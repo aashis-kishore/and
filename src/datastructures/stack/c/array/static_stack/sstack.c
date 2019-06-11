@@ -127,6 +127,23 @@ void* sstk_pop(sstackptr_t sstk, SSTK_BOOL mem_allocd_elmnt) {
     return elmnt;
 }
 
+void* sstk_peek(sstackptr_t sstk, size_t rev_index) {
+    if (!sstk) {
+        DTALGM_PRINT_ERR("sstk_peek", "Invalid address as argument")
+        return SSTK_PNOK; 
+    }
+
+    if(sstk->empty) {
+        DTALGM_PRINT_ERR("sstk_peek", "Unable to peek, stack is empty")
+        return SSTK_PNOK;
+    }
+
+    rev_index = rev_index % (sstk->top + 1);
+    void* elmnt_addr = (int8_t*)sstk->buffer + (sstk->top*sstk->elmnt_size - rev_index*sstk->elmnt_size);
+
+    return elmnt_addr;
+}
+
 int8_t sstk_destroy(sstackptr_t sstk, SSTK_BOOL mem_allocd_elmnt) {
     if (!sstk) {
         DTALGM_PRINT_ERR("sstk_destroy", "Invalid address as argument")
