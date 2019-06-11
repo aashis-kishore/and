@@ -258,6 +258,69 @@ Suite* sstk_push_suite(void) {
 // =========================================================================================
 
 
+// ========================================================================================= [sstk_pop(sstackptr_t, SSTK_BOOL)]
+// test: sstk_pop(NULL, SSTK_FALSE)
+START_TEST(test_sstk_pop__args__NULL__SSTK_FALSE) {
+    void* pop_stat = sstk_pop(NULL, SSTK_FALSE);
+    ck_assert_ptr_null(pop_stat);
+} END_TEST
+// test: sstk_pop(NULL, SSTK_TRUE)
+START_TEST(test_sstk_pop__args__NULL__SSTK_TRUE) {
+    void* pop_stat = sstk_pop(NULL, SSTK_TRUE);
+
+    ck_assert_ptr_null(pop_stat);
+} END_TEST
+
+// test: sstk_pop(sstk, SSTK_FALSE)
+START_TEST(test_sstk_pop__args__sstk__SSTK_FALSE) {
+    sstackptr_t sstk = sstk_create(SSTK_DEFAULT_SIZE, sizeof(int));
+    int elmnt = 12;
+    sstk_push(sstk, &elmnt, 0);
+
+    void* popped_elmnt = sstk_pop(sstk, SSTK_FALSE);
+
+    ck_assert_ptr_nonnull(popped_elmnt);
+    ck_assert_int_eq(*((int*)popped_elmnt), 12);
+    sstk_destroy(sstk, SSTK_FALSE);
+} END_TEST
+
+// test: sstk_pop(sstk, SSTK_TRUE)
+START_TEST(test_sstk_pop__args__sstk__SSTK_TRUE) {
+    sstackptr_t sstk = sstk_create(SSTK_DEFAULT_SIZE, sizeof(char*));
+    char elmnt[] = "test string";
+    sstk_push(sstk, elmnt, strlen(elmnt)+1);
+
+    void* popped_elmnt = sstk_pop(sstk, SSTK_TRUE);
+
+    ck_assert_ptr_nonnull(popped_elmnt);
+    ck_assert_str_eq((char*)popped_elmnt, elmnt);
+    sstk_destroy(sstk, SSTK_TRUE);
+} END_TEST
+
+
+Suite* sstk_pop_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("Pop");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_sstk_pop__args__NULL__SSTK_FALSE);
+    tcase_add_test(tc_failure, test_sstk_pop__args__NULL__SSTK_TRUE);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_sstk_pop__args__sstk__SSTK_FALSE);
+    tcase_add_test(tc_success, test_sstk_pop__args__sstk__SSTK_TRUE);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// =========================================================================================
+
+
 // ========================================================================================= [sstk_destroy(sstackptr_t, SSTK_BOOL)]
 // CASE: UNDEFINED STACK
 // test: stk_destroy(NULL, SSTK_FALSE)
@@ -331,6 +394,7 @@ int main(void) {
     srunner_add_suite(suite_runner, sstk_isEmpty_suite());
     srunner_add_suite(suite_runner, sstk_isFull_suite());
     srunner_add_suite(suite_runner, sstk_push_suite());
+    srunner_add_suite(suite_runner, sstk_pop_suite());
     srunner_add_suite(suite_runner, sstk_destroy_suite());
 
     // srunner_run_all(suite_runner, CK_NORMAL);
@@ -339,7 +403,8 @@ int main(void) {
     // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, "SKIP", CK_NORMAL);
     // srunner_run_tagged(suite_runner, "IsEmpty", NULL, NULL, "NEMPTY", CK_NORMAL);
     // srunner_run_tagged(suite_runner, "IsFull", NULL, NULL, "FULL NFULL", CK_NORMAL);
-    srunner_run_tagged(suite_runner, "Push", NULL, NULL, NULL, CK_NORMAL);
+    // srunner_run_tagged(suite_runner, "Push", NULL, NULL, NULL, CK_NORMAL);
+    srunner_run_tagged(suite_runner, "Pop", NULL, NULL, NULL, CK_NORMAL);
     
     num_tests_failed = srunner_ntests_failed(suite_runner);
     srunner_free(suite_runner);
