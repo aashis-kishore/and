@@ -124,7 +124,7 @@ void* sstk_pop(sstackptr_t sstk, SSTK_BOOL mem_allocd_elmnt) {
     else
         sstk->empty = SSTK_TRUE;
 
-    return ((mem_allocd_elmnt & SSTK_TRUE) == SSTK_TRUE) ? (void*)(*(uintptr_t*)elmnt) : elmnt;
+    return elmnt;
 }
 
 int8_t sstk_destroy(sstackptr_t sstk, SSTK_BOOL mem_allocd_elmnt) {
