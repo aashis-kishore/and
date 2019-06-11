@@ -91,7 +91,7 @@ int8_t sstk_push(sstackptr_t sstk, void* elmnt, size_t elmnt_size) {
             return SSTK_NOK;
         }
 
-        elmnt = elmnt_cpy;
+        elmnt = &elmnt_cpy;
     }
 
     void* elmnt_insrt_addr = (int8_t*)sstk->buffer + sstk->top*sstk->elmnt_size;
