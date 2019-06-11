@@ -106,6 +106,27 @@ int8_t sstk_push(sstackptr_t sstk, void* elmnt, size_t elmnt_size) {
     return SSTK_OK;
 }
 
+void* sstk_pop(sstackptr_t sstk, SSTK_BOOL mem_allocd_elmnt) {
+    if (!sstk) {
+        DTALGM_PRINT_ERR("sstk_pop", "Invalid address as argument")
+        return SSTK_PNOK;
+    }
+
+    if (sstk_isEmpty(sstk)) {
+        DTALGM_PRINT_ERR("sstk_pop", "Unable to perform pop, stack is empty")
+        return SSTK_PNOK;
+    }
+
+    void* elmnt = (int8_t*)sstk->buffer + sstk->top*sstk->elmnt_size;
+
+    if (sstk->top != 0)
+        sstk->top--;
+    else
+        sstk->empty = SSTK_TRUE;
+
+    return ((mem_allocd_elmnt & SSTK_TRUE) == SSTK_TRUE) ? (void*)(*(uintptr_t*)elmnt) : elmnt;
+}
+
 int8_t sstk_destroy(sstackptr_t sstk, SSTK_BOOL mem_allocd_elmnt) {
     if (!sstk) {
         DTALGM_PRINT_ERR("sstk_destroy", "Invalid address as argument")
