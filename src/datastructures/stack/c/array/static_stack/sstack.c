@@ -113,7 +113,7 @@ int8_t sstk_destroy(sstackptr_t sstk, SSTK_BOOL mem_allocd_elmnt) {
     }
 
     if ((mem_allocd_elmnt & SSTK_TRUE) == SSTK_TRUE) {
-        for (size_t i=0; i < sstk->num_elmnts; i++) {
+        for (size_t i=0; i <= sstk->top; i++) {
             void* currnt_elmnt = (void*)(*((uintptr_t*)sstk->buffer + i));
             free(currnt_elmnt);
         }
