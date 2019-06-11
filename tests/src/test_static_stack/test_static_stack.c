@@ -348,8 +348,11 @@ START_TEST(test_sstk_destroy__args_sstk__SSTK_FALSE) {
 
 // test: sstk_destroy(sstk, SSTK_TRUE)
 START_TEST(test_sstk_destroy__args_sstk__SSTK_TRUE) {
-    sstackptr_t sstk = sstk_create(0, sizeof(int));
+    sstackptr_t sstk = sstk_create(0, sizeof(char*));
     ck_assert_ptr_nonnull(sstk);
+
+    char elmnt[] = "test string two";
+    sstk_push(sstk, elmnt, strlen(elmnt)+1);
 
     int8_t destroy_stat = sstk_destroy(sstk, SSTK_TRUE);
     ck_assert_int_eq(destroy_stat, SSTK_OK);
@@ -393,12 +396,12 @@ int main(void) {
 
     // srunner_run_all(suite_runner, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Create", NULL, NULL, NULL, CK_NORMAL);
-    // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, NULL, CK_NORMAL);
+    srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, NULL, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, "SKIP", CK_NORMAL);
     // srunner_run_tagged(suite_runner, "IsEmpty", NULL, NULL, "NEMPTY", CK_NORMAL);
     // srunner_run_tagged(suite_runner, "IsFull", NULL, NULL, "FULL NFULL", CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Push", NULL, NULL, NULL, CK_NORMAL);
-    srunner_run_tagged(suite_runner, "Pop", NULL, NULL, NULL, CK_NORMAL);
+    // srunner_run_tagged(suite_runner, "Pop", NULL, NULL, NULL, CK_NORMAL);
     
     num_tests_failed = srunner_ntests_failed(suite_runner);
     srunner_free(suite_runner);
