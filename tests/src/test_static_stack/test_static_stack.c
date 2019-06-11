@@ -394,12 +394,10 @@ Suite* sstk_destroy_suite(void) {
     suite = suite_create("Destroy");
 
     tc_undefined_stack = tcase_create("Undefined Stack");
-    // tcase_set_tags(tc_undefined_stack, "SKIP");
     tcase_add_test(tc_undefined_stack, test_sstk_destroy__args__NULL__SSTK_FALSE);
     tcase_add_test(tc_undefined_stack, test_sstk_destroy__args__NULL__SSTK_TRUE);
 
     tc_defined_stack = tcase_create("Defined Stack");
-    tcase_set_tags(tc_defined_stack, "SKIP");
     tcase_add_test(tc_defined_stack, test_sstk_destroy__args_sstk__SSTK_FALSE);
     tcase_add_test(tc_defined_stack, test_sstk_destroy__args_sstk__SSTK_TRUE);
 
