@@ -323,7 +323,7 @@ Suite* sstk_pop_suite(void) {
 
 // ========================================================================================= [sstk_destroy(sstackptr_t, SSTK_BOOL)]
 // CASE: UNDEFINED STACK
-// test: stk_destroy(NULL, SSTK_FALSE)
+// test: sstk_destroy(NULL, SSTK_FALSE)
 START_TEST(test_sstk_destroy__args__NULL__SSTK_FALSE) {
     int8_t destroy_stat = sstk_destroy(NULL, SSTK_FALSE);
     ck_assert_int_eq(destroy_stat, SSTK_NOK);
