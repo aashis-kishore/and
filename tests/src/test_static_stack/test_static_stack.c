@@ -220,7 +220,7 @@ START_TEST(test_sstk_push__args__sstk__elmnt__0) {
 } END_TEST
 
 // test: sstk_push(sstk, elmnt, sizeof(char*))
-START_TEST(test_sstk_push__args__sstk__elmnt__sizeof_int_ptr) {
+START_TEST(test_sstk_push__args__sstk__elmnt__sizeof_char_ptr) {
     sstackptr_t sstk = sstk_create(SSTK_DEFAULT_SIZE, sizeof(char*));
     char elmnt[] = "test string";
 
@@ -247,7 +247,7 @@ Suite* sstk_push_suite(void) {
     tc_success = tcase_create("Success");
     tcase_set_tags(tc_success, "SUCCESS");
     tcase_add_test(tc_success, test_sstk_push__args__sstk__elmnt__0);
-    tcase_add_test(tc_success, test_sstk_push__args__sstk__elmnt__sizeof_int_ptr);
+    tcase_add_test(tc_success, test_sstk_push__args__sstk__elmnt__sizeof_char_ptr);
 
     suite_add_tcase(suite, tc_failure);
     suite_add_tcase(suite, tc_success);
