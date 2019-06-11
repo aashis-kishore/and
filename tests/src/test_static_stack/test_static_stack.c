@@ -410,7 +410,7 @@ Suite* sstk_destroy_suite(void) {
 // =========================================================================================
 
 
-int main(void) {
+int main(int argc, char** argv) {
     int num_tests_failed;
     
     SRunner* suite_runner = srunner_create(sstk_create_suite());
@@ -420,7 +420,12 @@ int main(void) {
     srunner_add_suite(suite_runner, sstk_pop_suite());
     srunner_add_suite(suite_runner, sstk_destroy_suite());
 
-    srunner_run_all(suite_runner, CK_NORMAL);
+    if (argc == 1) {
+        srunner_run_all(suite_runner, CK_NORMAL);
+    } else if (argc >= 2) {
+        srunner_run_tagged(suite_runner, argv[1], NULL, NULL, NULL, CK_NORMAL);
+    }
+
     // srunner_run_tagged(suite_runner, "Create", NULL, NULL, NULL, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, NULL, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "IsEmpty", NULL, NULL, NULL, CK_NORMAL);
