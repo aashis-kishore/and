@@ -18,6 +18,8 @@ typedef enum {
     SSTK_TRUE
 } SSTK_BOOL;
 
+#define sstk_getElement(data, type) *((type*)data)
+
 sstackptr_t sstk_create(size_t, size_t);
 int8_t sstk_isEmpty(sstackptr_t);
 int8_t sstk_isFull(sstackptr_t);
