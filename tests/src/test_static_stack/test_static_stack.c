@@ -419,9 +419,8 @@ int main(void) {
     // srunner_run_all(suite_runner, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Create", NULL, NULL, NULL, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, NULL, CK_NORMAL);
-    // srunner_run_tagged(suite_runner, "Destroy", NULL, NULL, "SKIP", CK_NORMAL);
     // srunner_run_tagged(suite_runner, "IsEmpty", NULL, NULL, NULL, CK_NORMAL);
-    srunner_run_tagged(suite_runner, "IsFull", NULL, NULL, NULL, CK_NORMAL);
+    // srunner_run_tagged(suite_runner, "IsFull", NULL, NULL, NULL, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Push", NULL, NULL, NULL, CK_NORMAL);
     // srunner_run_tagged(suite_runner, "Pop", NULL, NULL, NULL, CK_NORMAL);
     
