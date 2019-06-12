@@ -14,6 +14,7 @@ dofile("./src/datastructures/array/c/dynamic_array/dynamic_array.lua")          
 
 -- src projects tests
 dofile("./tests/src/test_static_stack/test_static_stack.lua")
+dofile("./tests/src/test_dynamic_array/test_dynamic_array.lua")                         -- test_dynamic_array
 
 
 newaction {
