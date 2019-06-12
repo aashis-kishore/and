@@ -12,7 +12,8 @@ project "test_static_stack"
 
     includedirs {
         "%{wks.location}/dev_dependencies/check/include",
-        "%{wks.location}/build/%{cfg.buildcfg}/lib/static_stack/include"
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/static_stack/include",
+        "%{wks.location}/src/and/"
     }
 
     libdirs {
