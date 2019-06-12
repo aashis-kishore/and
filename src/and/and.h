@@ -1,6 +1,10 @@
 #ifndef _AND_H
 #define _AND_H
 
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+
 #define AND_OK ((int8_t)0)
 #define AND_NOK ((int8_t)-1)
 #define AND_PNOK ((void*)0)

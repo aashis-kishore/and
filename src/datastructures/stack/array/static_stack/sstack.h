@@ -1,9 +1,6 @@
 #ifndef _SSTACK_H
 #define _SSTACK_H
 
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
 #include "and.h"
 
 typedef struct sstack* sstackptr_t;
