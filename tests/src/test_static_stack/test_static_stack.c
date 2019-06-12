@@ -1,7 +1,8 @@
 #include <check.h>
 #include <stdint.h>
 #include <string.h>
-#include <sstack.h>
+#include "sstack.h"
+#include "and.h"
 
 
 // ================================================================================================== [sstk_create(size_t, size_t)]
