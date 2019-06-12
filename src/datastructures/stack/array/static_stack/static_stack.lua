@@ -6,7 +6,8 @@ project "static_stack"
     targetname "sstack"
 
     includedirs {
-        "%{wks.location}/dev_dependencies/print_messages/include"
+        "%{wks.location}/dev_dependencies/print_messages/include",
+        "%{wks.location}/src/and/"
     }
 
     filter "configurations:debug"
