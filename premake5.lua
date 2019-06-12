@@ -10,6 +10,7 @@ dofile("./tests/dev_support/test_print_messages/test_print_messages.lua")
 
 -- src projects
 dofile("./src/datastructures/stack/c/array/static_stack/static_stack.lua")
+dofile("./src/datastructures/array/c/dynamic_array/dynamic_array.lua")                  -- dynamic_array
 
 -- src projects tests
 dofile("./tests/src/test_static_stack/test_static_stack.lua")
