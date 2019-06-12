@@ -427,6 +427,97 @@ Suite* sstk_peek_suite(void) {
 // =========================================================================================
 
 
+// ========================================================================================= [sstk_swap(sstackptr_t)]
+// test: sstk_swap(NULL)
+START_TEST(test_sstk_swap__args__NULL) {
+    void* swap_stat = sstk_swap(NULL);
+
+    ck_assert_ptr_null(swap_stat);
+} END_TEST
+
+// test: sstk_swap(empty_sstk)
+START_TEST(test_sstk_swap__args__empty_sstk) {
+    sstackptr_t empty_sstk = sstk_create(0, sizeof(int));
+    
+    void* swap_stat = sstk_swap(empty_sstk);
+
+    ck_assert_ptr_null(swap_stat);
+    sstk_destroy(empty_sstk, SSTK_FALSE);
+} END_TEST
+
+// test: sstk_swap(one_elmnt_sstk)
+START_TEST(test_sstk_swap__args__one_elmnt_sstk) {
+    sstackptr_t one_elmnt_sstk = sstk_create(0, sizeof(int));
+    int elmnt = 67;
+    sstk_push(one_elmnt_sstk, &elmnt, 0);
+
+    void* swap_stat = sstk_swap(one_elmnt_sstk);
+
+    ck_assert_ptr_nonnull(swap_stat);
+    ck_assert_int_eq(sstk_getElement(swap_stat, int), 67);
+    sstk_destroy(one_elmnt_sstk, SSTK_FALSE);
+} END_TEST
+
+// test: sstk_swap(two_elmnt_sstk)
+START_TEST(test_sstk_swap__args__two_elmnt_sstk) {
+    sstackptr_t two_elmnt_sstk = sstk_create(0, sizeof(int));
+
+    int elmnt_1 = 21, elmnt_2 = 22;
+    sstk_push(two_elmnt_sstk, &elmnt_1, 0);
+    sstk_push(two_elmnt_sstk, &elmnt_2, 0);
+
+    void* swap_stat = sstk_swap(two_elmnt_sstk);
+
+    void* new_top = sstk_peek(two_elmnt_sstk, 0);
+
+    ck_assert_ptr_nonnull(swap_stat);
+    ck_assert_int_eq(sstk_getElement(swap_stat, int), 22);
+    ck_assert_int_eq(sstk_getElement(new_top, int), 21);
+    sstk_destroy(two_elmnt_sstk, SSTK_FALSE);
+} END_TEST
+
+// test: sstk_swap(n_elmnt_sstk)
+START_TEST(test_sstk_swap__args__n_elmnt_sstk) {
+    sstackptr_t n_elmnt_sstk = sstk_create(0, sizeof(int));
+
+    for (int i=1; i<=5; i++)
+        sstk_push(n_elmnt_sstk, &i, 0);
+
+    void* swap_stat = sstk_swap(n_elmnt_sstk);
+
+    void* new_top = sstk_peek(n_elmnt_sstk, 0);
+
+    ck_assert_ptr_nonnull(swap_stat);
+    ck_assert_int_eq(sstk_getElement(swap_stat, int), 5);
+    ck_assert_int_eq(sstk_getElement(new_top, int), 4);
+    sstk_destroy(n_elmnt_sstk, SSTK_FALSE);
+} END_TEST
+
+
+Suite* sstk_swap_suite(void) {
+    Suite *suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("Swap");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_sstk_swap__args__NULL);
+    tcase_add_test(tc_failure, test_sstk_swap__args__empty_sstk);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_sstk_swap__args__one_elmnt_sstk);
+    tcase_add_test(tc_success, test_sstk_swap__args__two_elmnt_sstk);
+    tcase_add_test(tc_success, test_sstk_swap__args__n_elmnt_sstk);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// =========================================================================================
+
+
 // ========================================================================================= [sstk_destroy(sstackptr_t, SSTK_BOOL)]
 // CASE: UNDEFINED STACK
 // test: sstk_destroy(NULL, SSTK_FALSE)
@@ -497,6 +588,7 @@ int main(int argc, char** argv) {
     srunner_add_suite(suite_runner, sstk_push_suite());
     srunner_add_suite(suite_runner, sstk_pop_suite());
     srunner_add_suite(suite_runner, sstk_peek_suite());
+    srunner_add_suite(suite_runner, sstk_swap_suite());
     srunner_add_suite(suite_runner, sstk_destroy_suite());
 
     if (argc == 1) {
