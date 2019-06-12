@@ -144,6 +144,63 @@ void* sstk_peek(sstackptr_t sstk, size_t rev_index) {
     return elmnt_addr;
 }
 
+static inline void* _swap(sstackptr_t sstk) {
+    void* tmp_elmnt_store = malloc(sstk->elmnt_size);
+
+    if (!tmp_elmnt_store) {
+        DTALGM_PRINT_ERR("sstk_swap", "Unable to allocate memory for temporary storage")
+        return SSTK_PNOK;
+    }
+
+    void* top_addr = (int8_t*)sstk->buffer + sstk->top*sstk->elmnt_size;
+    void* prev_top_addr = (int8_t*)sstk->buffer + (sstk->top-1)*sstk->elmnt_size;
+
+    void* tmp_memcpy_stat = memcpy(tmp_elmnt_store, top_addr, sstk->elmnt_size);
+
+    if (!tmp_memcpy_stat) {
+        DTALGM_PRINT_ERR("sstk_swap", "Unable to copy element to temporary location");
+        return SSTK_PNOK;
+    }
+
+    void* top_memcpy_stat = memcpy(top_addr, prev_top_addr, sstk->elmnt_size);
+
+    if (!top_memcpy_stat) {
+        DTALGM_PRINT_ERR("sstk_swap", "Unable to copy element to top location");
+        return SSTK_PNOK;
+    }
+
+    void* prev_top_memcpy_stat = memcpy(prev_top_addr, tmp_elmnt_store, sstk->elmnt_size);
+
+    if (!prev_top_memcpy_stat) {
+        DTALGM_PRINT_ERR("sstk_swap", "Unable to copy element to prev-top location");
+        return SSTK_PNOK;
+    }
+
+    free(tmp_elmnt_store);
+
+    return prev_top_addr;
+
+}
+
+void* sstk_swap(sstackptr_t sstk) {
+    if (!sstk) {
+        DTALGM_PRINT_ERR("sstk_swap", "Invalid address as argument")
+        return SSTK_PNOK;
+    }
+
+    if (sstk->empty) {
+        DTALGM_PRINT_ERR("sstk_swap", "Unable to perform swap, stack is empty")
+        return SSTK_PNOK;
+    }
+
+    if (sstk->top == 0) {
+        DTALGM_PRINT_WARN("sstk_swap", "Unable to perform swap, stack contains just one element")
+        return ((int8_t*)sstk->buffer + sstk->top*sstk->elmnt_size);
+    }
+
+    return _swap(sstk);
+}
+
 int8_t sstk_destroy(sstackptr_t sstk, SSTK_BOOL mem_allocd_elmnt) {
     if (!sstk) {
         DTALGM_PRINT_ERR("sstk_destroy", "Invalid address as argument")
