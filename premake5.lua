@@ -5,6 +5,7 @@ workspace "algorithms_n_datastructures"
 -- src projects
 dofile("./src/datastructures/stack/array/static_stack/static_stack.lua")
 dofile("./src/datastructures/array/dynamic_array/dynamic_array.lua")                  -- dynamic_array
+dofile("./src/datastructures/array/static_array/static_array.lua")                      -- static_array
 
 -- src projects tests
 dofile("./tests/test_static_stack/test_static_stack.lua")                               -- test_static_stack
