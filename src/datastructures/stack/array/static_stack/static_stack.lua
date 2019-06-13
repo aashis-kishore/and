@@ -6,7 +6,6 @@ project "static_stack"
     targetname "sstack"
 
     includedirs {
-        "%{wks.location}/dev_dependencies/print_messages/include",
         "%{wks.location}/src/and/"
     }
 
@@ -16,14 +15,6 @@ project "static_stack"
         }
 
         symbols "On"
-
-        libdirs {
-            "%{wks.location}/dev_dependencies/print_messages/lib"
-        }
-
-        links {
-            "print_messages"
-        }
 
     filter "configurations:release"
         defines {
