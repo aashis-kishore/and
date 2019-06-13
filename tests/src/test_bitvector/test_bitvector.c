@@ -363,10 +363,49 @@ Suite* bv_create_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [bv_destroy(bitvectorptr_t)]
+// test: bv_destroy(NULL)
+START_TEST(test_bv_destroy__args__NULL) {
+    int8_t destroy_stat = bv_destroy(NULL);
+
+    ck_assert_int_eq(destroy_stat, AND_NOK);
+} END_TEST
+
+// test: bv_destroy(bv)
+START_TEST(test_bv_destroy__args__bv) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    int8_t destroy_stat = bv_destroy(bv);
+    ck_assert_int_eq(destroy_stat, AND_OK);
+} END_TEST
+
+
+Suite* bv_destroy_suite(void) {
+    Suite *suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("Destroy");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_bv_destroy__args__NULL);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_bv_destroy__args__bv);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 int main(int argc, char** argv) {
     int num_tests_failed;
     
     SRunner* suite_runner = srunner_create(bv_create_suite());
+    srunner_add_suite(suite_runner, bv_destroy_suite());
 
     if (argc == 1) {
         srunner_run_all(suite_runner, CK_NORMAL);
