@@ -362,6 +362,59 @@ Suite* bv_create_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [bv_isBitSet(bitvectorptr_t, size_t)]
+// test: bv_isBitSet(NULL, 3)
+START_TEST(test_bv_isBitSet__args__NULL__3) {
+    ck_assert_int_eq(bv_isBitSet(NULL, 3), AND_NOK);
+} END_TEST
+
+// test: bv_isBitSet(NULL, 18)
+START_TEST(test_bv_isBitSet__args__NULL__18) {
+    ck_assert_int_eq(bv_isBitSet(NULL, 18), AND_NOK);
+} END_TEST
+
+// test: bv_isBitSet(bv, 6)
+START_TEST(test_bv_isBitSet__args__bv__6) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 5);
+
+    ck_assert_int_eq(bv_isBitSet(bv, 6), AND_FALSE);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_isBitSet(bv, 73)
+START_TEST(test_bv_isBitSet__args__bv__73) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 73);
+
+    ck_assert_int_eq(bv_isBitSet(bv, 73), AND_TRUE);
+    bv_destroy(bv);
+} END_TEST
+
+
+Suite* bv_isBitSet_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("IsBitSet");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_bv_isBitSet__args__NULL__3);
+    tcase_add_test(tc_failure, test_bv_isBitSet__args__NULL__18);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_bv_isBitSet__args__bv__6);
+    tcase_add_test(tc_success, test_bv_isBitSet__args__bv__73);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [bv_destroy(bitvectorptr_t)]
 // test: bv_destroy(NULL)
 START_TEST(test_bv_destroy__args__NULL) {
