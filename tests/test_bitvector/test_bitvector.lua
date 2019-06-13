@@ -12,7 +12,8 @@ project "test_bitvector"
 
     includedirs {
         "%{wks.location}/dev_dependencies/check/include",
-        "%{wks.location}/build/%{cfg.buildcfg}/lib/bitvector/include"
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/bitvector/include",
+        "%{wks.location}/src/and/",
     }
 
     libdirs {
