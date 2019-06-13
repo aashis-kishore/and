@@ -1,4 +1,4 @@
-workspace "datum_algum"
+workspace "algorithms_n_datastructures"
     configurations { "debug", "release" }
 
 
