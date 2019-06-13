@@ -6,7 +6,6 @@ project "bitvector"
     targetname "bitvector"
 
     includedirs {
-        "%{wks.location}/dev_dependencies/print_messages/include",
         "%{wks.location}/src/and/",
     }
 
@@ -16,14 +15,6 @@ project "bitvector"
         }
 
         symbols "On"
-
-        libdirs {
-            "%{wks.location}/dev_dependencies/print_messages/lib"
-        }
-
-        links {
-            "print_messages"
-        }
 
     filter "configurations:release"
         defines {
