@@ -7,8 +7,8 @@ dofile("./src/datastructures/stack/array/static_stack/static_stack.lua")
 dofile("./src/datastructures/array/dynamic_array/dynamic_array.lua")                  -- dynamic_array
 
 -- src projects tests
-dofile("./tests/src/test_static_stack/test_static_stack.lua")
-dofile("./tests/src/test_dynamic_array/test_dynamic_array.lua")                         -- test_dynamic_array
+dofile("./tests/test_static_stack/test_static_stack.lua")                               -- test_static_stack
+dofile("./tests/test_dynamic_array/test_dynamic_array.lua")                             -- test_dynamic_array
 
 
 newaction {
