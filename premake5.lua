@@ -10,6 +10,7 @@ dofile("./src/datastructures/bitvector/bitvector.lua")                          
 -- src projects tests
 dofile("./tests/test_static_stack/test_static_stack.lua")                               -- test_static_stack
 dofile("./tests/test_dynamic_array/test_dynamic_array.lua")                             -- test_dynamic_array
+dofile("./test/test_bitvector/test_bitvector.lua")                                      -- test_bitvector
 
 
 newaction {
