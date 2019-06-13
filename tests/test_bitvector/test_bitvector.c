@@ -1,7 +1,6 @@
 #include <check.h>
 #include <stdint.h>
 #include "bitvector.h"
-#include "and.h"
 
 
 // ================================================================================================== [bv_create(size_t, uint8_t, uint8_t, AND_BOOL)]
