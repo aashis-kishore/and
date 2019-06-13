@@ -50,6 +50,21 @@ bitvectorptr_t bv_create(size_t vector_size, uint8_t growth_factor, uint8_t load
     return bv;
 }
 
+int8_t bv_isBitSet(bitvectorptr_t bv, size_t index) {
+    if (!bv) {
+        AND_PRINT_ERR("bv_isBitSet", "Invalid address as argument")
+        return AND_NOK;
+    }
+
+    size_t chunk_size = sizeof(uint32_t);
+
+    index = index % (bv->vector_size*chunk_size);
+
+    uint32_t mask = 1<<((chunk_size-1) - index);
+
+    return !!(bv->buffer[index/chunk_size] & mask);
+}
+
 int8_t bv_destroy(bitvectorptr_t bv) {
     if (!bv) {
         AND_PRINT_ERR("bv_destroy", "Invalid address as argument")
