@@ -1,5 +1,4 @@
 #include "sstack.h"
-#include "prntmsgs.h"
 
 
 typedef struct sstack {
