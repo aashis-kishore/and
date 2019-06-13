@@ -1,6 +1,7 @@
 #ifndef _BITVECTOR_H
 #define _BITVECTOR_H
 
+#include <math.h>
 #include "and.h"
 
 typedef struct bitvector* bitvectorptr_t;
