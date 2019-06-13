@@ -415,6 +415,59 @@ Suite* bv_isBitSet_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [bv_isBitClear(bitvectorptr_t, size_t)]
+// test: bv_isBitClear(NULL, 8)
+START_TEST(test_bv_isBitClear__args__NULL__8) {
+    ck_assert_int_eq(bv_isBitClear(NULL, 8), AND_NOK);
+} END_TEST
+
+// test: bv_isBitClear(NULL, 80)
+START_TEST(test_bv_isBitClear__args__NULL__80) {
+    ck_assert_int_eq(bv_isBitClear(NULL, 80), AND_NOK);
+} END_TEST
+
+// test: bv_isBitClear(bv, 12)
+START_TEST(test_bv_isBitClear__args__bv__12) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    ck_assert_int_eq(bv_isBitClear(bv, 12), AND_TRUE);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_isBitClear(bv, 35)
+START_TEST(test_bv_isBitClear__args__bv__35) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 35);
+
+    ck_assert_int_eq(bv_isBitClear(bv, 35), AND_FALSE);
+    bv_destroy(bv);
+} END_TEST
+
+
+Suite* bv_isBitClear_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("IsBitClear");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_bv_isBitClear__args__NULL__8);
+    tcase_add_test(tc_failure, test_bv_isBitClear__args__NULL__80);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_bv_isBitClear__args__bv__12);
+    tcase_add_test(tc_success, test_bv_isBitClear__args__bv__35);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [bv_destroy(bitvectorptr_t)]
 // test: bv_destroy(NULL)
 START_TEST(test_bv_destroy__args__NULL) {
@@ -458,6 +511,7 @@ int main(int argc, char** argv) {
     
     SRunner* suite_runner = srunner_create(bv_create_suite());
     srunner_add_suite(suite_runner, bv_isBitSet_suite());
+    srunner_add_suite(suite_runner, bv_isBitClear_suite());
     srunner_add_suite(suite_runner, bv_destroy_suite());
 
     if (argc == 1) {
