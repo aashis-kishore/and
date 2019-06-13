@@ -16,4 +16,16 @@ typedef enum {
 
 #define and_getElement(data, type) *((type*)data)
 
+
+#ifdef DEBUG
+    #include <stdio.h>
+    
+    #define AND_PRINT(msg) printf("%s\n", msg);
+    #define AND_PRINT_ERR(func_name, err_msg) printf("[ERROR] : [%s] => %s.\n", func_name, err_msg);
+    #define AND_PRINT_WARN(func_name, warn_msg) printf("[WARNING] : [%s] => %s.\n", func_name, warn_msg);
+#else
+    #define AND_PRINT(msg)
+    #define AND_PRINT_ERR(func_name, err_msg)
+    #define AND_PRINT_WARN(func_name, warn_msg)
+#endif
 #endif
