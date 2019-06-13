@@ -410,6 +410,8 @@ Suite* bv_isBitSet_suite(void) {
 
     suite_add_tcase(suite, tc_failure);
     suite_add_tcase(suite, tc_success);
+
+    return suite;
 }
 
 // ==================================================================================================
