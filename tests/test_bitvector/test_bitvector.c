@@ -457,6 +457,7 @@ int main(int argc, char** argv) {
     int num_tests_failed;
     
     SRunner* suite_runner = srunner_create(bv_create_suite());
+    srunner_add_suite(suite_runner, bv_isBitSet_suite());
     srunner_add_suite(suite_runner, bv_destroy_suite());
 
     if (argc == 1) {
