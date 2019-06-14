@@ -471,6 +471,69 @@ Suite* bv_isBitClear_suite(void) {
 
 
 // ================================================================================================== [bv_destroy(bitvectorptr_t)]
+// test: bv_setBit(NULL, 45)
+START_TEST(test_bv_setBit__args__NULL__45) {
+    ck_assert_int_eq(bv_setBit(NULL, 45), AND_NOK);
+} END_TEST
+
+// test: bv_setBit(bv, 67)
+START_TEST(test_bv_setBit__args__bv__67) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    int8_t set_bit_stat = bv_setBit(bv, 67);
+
+    ck_assert_int_eq(set_bit_stat, AND_OK);
+    ck_assert_int_eq(bv_isBitSet(bv, 67), AND_TRUE);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_setBit(bv, 88)
+START_TEST(test_bv_setBit__args__bv__88) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    int8_t set_bit_stat = bv_setBit(bv, 88);
+
+    ck_assert_int_eq(set_bit_stat, AND_OK);
+    ck_assert_int_eq(bv_isBitSet(bv, 89), AND_FALSE);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_setBit(bv, 23)
+START_TEST(test_bv_setBit__args__bv__23) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    int8_t set_bit_stat = bv_setBit(bv, 23);
+
+    ck_assert_int_eq(set_bit_stat, AND_OK);
+    ck_assert_int_eq(bv_isBitSet(bv, 22), AND_FALSE);
+    bv_destroy(bv);
+} END_TEST
+
+
+Suite* bv_setBit_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("SetBit");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_bv_setBit__args__NULL__45);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_bv_setBit__args__bv__67);
+    tcase_add_test(tc_success, test_bv_setBit__args__bv__88);
+    tcase_add_test(tc_success, test_bv_setBit__args__bv__23);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
+// ================================================================================================== [bv_destroy(bitvectorptr_t)]
 // test: bv_destroy(NULL)
 START_TEST(test_bv_destroy__args__NULL) {
     int8_t destroy_stat = bv_destroy(NULL);
@@ -514,6 +577,7 @@ int main(int argc, char** argv) {
     SRunner* suite_runner = srunner_create(bv_create_suite());
     srunner_add_suite(suite_runner, bv_isBitSet_suite());
     srunner_add_suite(suite_runner, bv_isBitClear_suite());
+    srunner_add_suite(suite_runner, bv_setBit_suite());
     srunner_add_suite(suite_runner, bv_destroy_suite());
 
     if (argc == 1) {
