@@ -579,6 +579,8 @@ Suite* bv_clearBit_suite(void) {
     Suite* suite;
     TCase *tc_failure, *tc_success;
 
+    suite = suite_create("ClearBit");
+
     tc_failure = tcase_create("Failure");
     tcase_add_test(tc_failure, test_bv_clearBit__args__NULL__56);
 
@@ -589,8 +591,6 @@ Suite* bv_clearBit_suite(void) {
 
     suite_add_tcase(suite, tc_failure);
     suite_add_tcase(suite, tc_success);
-
-    suite = suite_create("ClearBit");
 
     return suite;
 }
