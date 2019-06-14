@@ -67,7 +67,7 @@ int8_t bv_isBitSet(bitvectorptr_t bv, size_t index) {
 
 int8_t bv_isBitClear(bitvectorptr_t bv, size_t index) {
     if (!bv) {
-        AND_PRINT_ERR("bv_isBitSet", "Invalid address as argument")
+        AND_PRINT_ERR("bv_isBitClear", "Invalid address as argument")
         return AND_NOK;
     }
 
@@ -82,7 +82,7 @@ int8_t bv_isBitClear(bitvectorptr_t bv, size_t index) {
 
 int8_t bv_setBit(bitvectorptr_t bv, size_t index) {
     if (!bv) {
-        AND_PRINT_ERR("bv_isBitSet", "Invalid address as argument")
+        AND_PRINT_ERR("bv_setBit", "Invalid address as argument")
         return AND_NOK;
     }
 
