@@ -91,6 +91,11 @@ int8_t bv_setBit(bitvectorptr_t bv, size_t index) {
     index = index % (bv->vector_size*chunk_size);
 
     uint32_t mask = 1<<((chunk_size-1) - index);
+
+    uint32_t is_bit_set = !!(bv->buffer[index/chunk_size] & mask);
+    if (!is_bit_set)
+        bv->num_bits_set++;
+
     bv->buffer[index/chunk_size] |= mask;
 
     return AND_OK;    
