@@ -362,6 +362,78 @@ Suite* bv_create_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [bv_getVectorSize(bitvectorptr_t, int8_t*)]
+// test: bv_getVectorSize(NULL, NULL)
+START_TEST(test_bv_getVectorSize__args__NULL__NULL) {
+    size_t vector_size = bv_getVectorSize(NULL, NULL);
+    ck_assert_int_eq(vector_size, 0);
+} END_TEST
+
+// test: bv_getVectorSize(NULL, stat)
+START_TEST(test_bv_getVectorSize__args__NULL__stat) {
+    int8_t get_vector_size_stat;
+    size_t vector_size = bv_getVectorSize(NULL, &get_vector_size_stat);
+    ck_assert_int_eq(get_vector_size_stat, AND_NOK);
+} END_TEST
+
+// test: bv_getVectorSize(bv, NULL)
+START_TEST(test_bv_getVectorSize__args__bv__NULL) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    size_t vector_size = bv_getVectorSize(bv, NULL);
+    ck_assert_int_eq(vector_size, 8);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_getVectorSize(bv, stat)
+START_TEST(test_bv_getVectorSize__args__bv__stat) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+    int8_t get_vector_size_stat;
+
+    size_t vector_size = bv_getVectorSize(bv, &get_vector_size_stat);
+    ck_assert_int_eq(get_vector_size_stat, AND_OK);
+    ck_assert_int_eq(vector_size, 8);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_getVectorSize(bv, stat) -- POST RESIZE
+START_TEST(test_bv_getVectorSize__args__bv__stat__POST_RESIZE) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+    int8_t get_vector_size_stat;
+
+    bv_setBit(bv, 256);
+
+    size_t vector_size = bv_getVectorSize(bv, &get_vector_size_stat);
+    ck_assert_int_eq(get_vector_size_stat, AND_OK);
+    ck_assert_int_eq(vector_size, 12);
+    bv_destroy(bv);
+} END_TEST
+
+
+Suite* bv_getVectorSize_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("GetVectorSize");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_bv_getVectorSize__args__NULL__NULL);
+    tcase_add_test(tc_failure, test_bv_getVectorSize__args__NULL__stat);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_bv_getVectorSize__args__bv__NULL);
+    tcase_add_test(tc_success, test_bv_getVectorSize__args__bv__stat);
+    tcase_add_test(tc_success, test_bv_getVectorSize__args__bv__stat__POST_RESIZE);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [bv_isBitSet(bitvectorptr_t, size_t)]
 // test: bv_isBitSet(NULL, 3)
 START_TEST(test_bv_isBitSet__args__NULL__3) {
@@ -965,6 +1037,7 @@ int main(int argc, char** argv) {
     int num_tests_failed;
     
     SRunner* suite_runner = srunner_create(bv_create_suite());
+    srunner_add_suite(suite_runner, bv_getVectorSize_suite());    
     srunner_add_suite(suite_runner, bv_isBitSet_suite());
     srunner_add_suite(suite_runner, bv_isBitClear_suite());
     srunner_add_suite(suite_runner, bv_setBit_suite());
