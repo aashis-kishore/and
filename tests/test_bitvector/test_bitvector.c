@@ -600,8 +600,8 @@ START_TEST(test_bv_clearBit__args__NULL__56) {
     ck_assert_int_eq(bv_clearBit(NULL, 56), AND_NOK);
 } END_TEST
 
-// test: bv_clearBit(bv, 129)
-START_TEST(test_bv_clearBit__args__bv__129) {
+// test: bv_clearBit(bv, 129) -- STATIC
+START_TEST(test_bv_clearBit__args__bv__129__STATIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
 
     int8_t clear_bit_stat = bv_clearBit(bv, 129);
@@ -611,8 +611,19 @@ START_TEST(test_bv_clearBit__args__bv__129) {
     bv_destroy(bv);
 } END_TEST
 
-// test: bv_clearBit(bv, 12)
-START_TEST(test_bv_clearBit__args__bv__12) {
+// test: bv_clearBit(bv, 129) -- DYNAMIC
+START_TEST(test_bv_clearBit__args__bv__129__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    int8_t clear_bit_stat = bv_clearBit(bv, 129);
+
+    ck_assert_int_eq(clear_bit_stat, AND_OK);
+    ck_assert_int_eq(bv_isBitClear(bv, 129), AND_TRUE);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_clearBit(bv, 12) -- STATIC
+START_TEST(test_bv_clearBit__args__bv__12__STATIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
 
     bv_setBit(bv, 12);
@@ -623,8 +634,20 @@ START_TEST(test_bv_clearBit__args__bv__12) {
     bv_destroy(bv);
 } END_TEST
 
-// test: bv_clearBit(bv, 255)
-START_TEST(test_bv_clearBit__args__bv__255) {
+// test: bv_clearBit(bv, 12) -- DYNAMIC
+START_TEST(test_bv_clearBit__args__bv__12__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    bv_setBit(bv, 12);
+    int8_t clear_bit_stat = bv_clearBit(bv, 12);
+
+    ck_assert_int_eq(clear_bit_stat, AND_OK);
+    ck_assert_int_eq(bv_isBitClear(bv, 12), AND_TRUE);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_clearBit(bv, 255) -- STATIC
+START_TEST(test_bv_clearBit__args__bv__255__STATIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
 
     bv_setBit(bv, 254);
@@ -632,6 +655,41 @@ START_TEST(test_bv_clearBit__args__bv__255) {
 
     ck_assert_int_eq(clear_bit_stat, AND_OK);
     ck_assert_int_eq(bv_isBitClear(bv, 255), AND_TRUE);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_clearBit(bv, 255) -- DYNAMIC
+START_TEST(test_bv_clearBit__args__bv__255__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    bv_setBit(bv, 254);
+    int8_t clear_bit_stat = bv_clearBit(bv, 255);
+
+    ck_assert_int_eq(clear_bit_stat, AND_OK);
+    ck_assert_int_eq(bv_isBitClear(bv, 255), AND_TRUE);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_clearBit(bv, 256) -- STATIC
+START_TEST(test_bv_clearBit__args__bv__256__STATIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 256);
+    int8_t clear_bit_stat = bv_clearBit(bv, 256);
+
+    ck_assert_int_eq(clear_bit_stat, AND_NOK);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_clearBit(bv, 256) -- DYNAMIC
+START_TEST(test_bv_clearBit__args__bv__256__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    bv_setBit(bv, 256);
+    int8_t clear_bit_stat = bv_clearBit(bv, 256);
+
+    ck_assert_int_eq(clear_bit_stat, AND_OK);
+    ck_assert_int_eq(bv_isBitClear(bv, 256), AND_TRUE);
     bv_destroy(bv);
 } END_TEST
 
@@ -644,11 +702,15 @@ Suite* bv_clearBit_suite(void) {
 
     tc_failure = tcase_create("Failure");
     tcase_add_test(tc_failure, test_bv_clearBit__args__NULL__56);
+    tcase_add_test(tc_failure, test_bv_clearBit__args__bv__256__STATIC);
 
     tc_success = tcase_create("Success");
-    tcase_add_test(tc_success, test_bv_clearBit__args__bv__129);
-    tcase_add_test(tc_success, test_bv_clearBit__args__bv__12);
-    tcase_add_test(tc_success, test_bv_clearBit__args__bv__255);
+    tcase_add_test(tc_success, test_bv_clearBit__args__bv__129__STATIC);
+    tcase_add_test(tc_success, test_bv_clearBit__args__bv__129__DYNAMIC);
+    tcase_add_test(tc_success, test_bv_clearBit__args__bv__12__STATIC);
+    tcase_add_test(tc_success, test_bv_clearBit__args__bv__12__DYNAMIC);
+    tcase_add_test(tc_success, test_bv_clearBit__args__bv__255__STATIC);
+    tcase_add_test(tc_success, test_bv_clearBit__args__bv__255__DYNAMIC);
 
     suite_add_tcase(suite, tc_failure);
     suite_add_tcase(suite, tc_success);
