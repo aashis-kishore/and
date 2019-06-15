@@ -13,6 +13,8 @@ typedef struct bitvector* bitvectorptr_t;
 
 
 bitvectorptr_t bv_create(size_t, uint8_t, uint8_t, AND_BOOL);
+size_t bv_getVectorSize(bitvectorptr_t, int8_t*);
+size_t bv_getNumBitsSet(bitvectorptr_t, int8_t*);
 int8_t bv_isBitSet(bitvectorptr_t, size_t);
 int8_t bv_isBitClear(bitvectorptr_t, size_t);
 size_t bv_numBitSetInRange(bitvectorptr_t, size_t, size_t, int8_t*);
