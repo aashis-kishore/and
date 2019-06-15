@@ -80,10 +80,55 @@ size_t bv_numBitSetInRange(bitvectorptr_t bv, size_t lindex, size_t uindex, int8
     return AND_NOK;
 }
 
+static bitvectorptr_t _resize(bitvectorptr_t bv, size_t new_vector_size) {
+    void* new_buffer = realloc(bv->buffer, new_vector_size*sizeof(uint32_t));
+
+    if (!new_buffer) {
+        AND_PRINT_ERR("_resize", "Unable to resize vector")
+        return AND_PNOK;
+    }
+
+    size_t old_vector_size = bv->vector_size;
+
+    bv->buffer = new_buffer;
+    bv->vector_size = new_vector_size;
+    bv->max_size_before_resize = (bv->vector_size*BV_CHUNK_SIZE)*((float)bv->load_factor/100);
+
+    int8_t clear_bit_range_stat = bv_clearBitRange(bv, old_vector_size*BV_CHUNK_SIZE, bv->vector_size-1*BV_CHUNK_SIZE-1);
+
+    if (clear_bit_range_stat == AND_NOK) {
+        AND_PRINT_ERR("bv_setBit", "Unable to clear bit range")
+        return AND_PNOK;
+    }
+
+    return bv;
+}
+
 int8_t bv_setBit(bitvectorptr_t bv, size_t index) {
     if (!bv) {
         AND_PRINT_ERR("bv_setBit", "Invalid address as argument")
         return AND_NOK;
+    }
+
+    if (!bv->is_dynamic) {
+        size_t max_index = bv->vector_size*BV_CHUNK_SIZE - 1;
+
+        if (index > max_index) {
+            AND_PRINT_ERR("bv_setBit", "Index out of bounds")
+            return AND_NOK;
+        }
+    }
+
+    if (bv->is_dynamic) {
+        if (bv->num_bits_set > bv->max_size_before_resize) {
+            size_t new_vector_size = ceil(((bv->vector_size*BV_CHUNK_SIZE)*((float)bv->growth_factor/100))/BV_CHUNK_SIZE);
+            bitvectorptr_t new_bv = _resize(bv, new_vector_size);
+            
+            if (!new_bv) {
+                AND_PRINT_ERR("bv_setBit", "Vector resizing failed")
+                return AND_NOK;
+            }
+        }
     }
 
     index = index % (bv->vector_size*BV_CHUNK_SIZE);
