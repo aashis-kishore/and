@@ -14,6 +14,8 @@ typedef struct bitvector* bitvectorptr_t;
 bitvectorptr_t bv_create(size_t, uint8_t, uint8_t, AND_BOOL);
 int8_t bv_isBitSet(bitvectorptr_t, size_t);
 int8_t bv_isBitClear(bitvectorptr_t, size_t);
+size_t bv_numBitSetInRange(bitvectorptr_t, size_t, size_t, int8_t*);
+size_t bv_numBitClearInRange(bitvectorptr_t, size_t, size_t, int8_t*);
 int8_t bv_setBit(bitvectorptr_t, size_t);
 int8_t bv_clearBit(bitvectorptr_t, size_t);
 int8_t bv_toggleBit(bitvectorptr_t, size_t);
