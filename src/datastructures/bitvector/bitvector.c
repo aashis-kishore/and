@@ -150,6 +150,15 @@ int8_t bv_clearBit(bitvectorptr_t bv, size_t index) {
         return AND_NOK;
     }
 
+    if (!bv->is_dynamic) {
+        size_t max_index = bv->vector_size*BV_CHUNK_SIZE - 1;
+
+        if (index > max_index) {
+            AND_PRINT_ERR("bv_clearBit", "Index out of bounds")
+            return AND_NOK;
+        }
+    }
+
     index = index % (bv->vector_size*BV_CHUNK_SIZE);
 
     uint32_t mask = 1<<((BV_CHUNK_SIZE-1) - index);
