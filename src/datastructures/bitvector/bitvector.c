@@ -102,6 +102,12 @@ size_t bv_numBitSetInRange(bitvectorptr_t bv, size_t lindex, size_t uindex, int8
     return AND_NOK;
 }
 
+size_t bv_numBitsClearInRange(bitvectorptr_t bv, size_t lindex, size_t uindex, int8_t* status) {
+    // TODO
+    
+    return AND_NOK;
+}
+
 static bitvectorptr_t _resize(bitvectorptr_t bv, size_t new_vector_size) {
     void* new_buffer = realloc(bv->buffer, new_vector_size*sizeof(uint32_t));
 
