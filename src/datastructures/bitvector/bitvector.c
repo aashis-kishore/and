@@ -178,6 +178,12 @@ int8_t bv_setBitRange(bitvectorptr_t bv, size_t lindex, size_t uindex) {
     return AND_NOK;
 }
 
+int8_t bv_clearBitRange(bitvectorptr_t bv, size_t lindex, size_t uindex) {
+    // TODO
+
+    return AND_NOK;
+}
+
 int8_t bv_destroy(bitvectorptr_t bv) {
     if (!bv) {
         AND_PRINT_ERR("bv_destroy", "Invalid address as argument")
