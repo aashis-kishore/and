@@ -8,6 +8,7 @@ typedef struct bitvector {
     uint8_t load_factor;
     AND_BOOL is_dynamic;
     size_t num_bits_set;
+    size_t max_size_before_resize;
 } bitvector_t;
 
 
@@ -46,6 +47,7 @@ bitvectorptr_t bv_create(size_t vector_size, uint8_t growth_factor, uint8_t load
     bv->load_factor = load_factor;
     bv->is_dynamic = is_dynamic;
     bv->num_bits_set = 0;
+    bv->max_size_before_resize = (bv->vector_size*BV_CHUNK_SIZE)*((float)bv->load_factor/100);
 
     return bv;
 }
