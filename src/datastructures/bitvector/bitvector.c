@@ -96,7 +96,7 @@ int8_t bv_isBitClear(bitvectorptr_t bv, size_t index) {
     return !(bv->buffer[index/BV_CHUNK_SIZE] & mask);
 }
 
-size_t bv_numBitSetInRange(bitvectorptr_t bv, size_t lindex, size_t uindex, int8_t* status) {
+size_t bv_numBitsSetInRange(bitvectorptr_t bv, size_t lindex, size_t uindex, int8_t* status) {
     // TODO
 
     return AND_NOK;
