@@ -476,8 +476,8 @@ START_TEST(test_bv_setBit__args__NULL__45) {
     ck_assert_int_eq(bv_setBit(NULL, 45), AND_NOK);
 } END_TEST
 
-// test: bv_setBit(bv, 67)
-START_TEST(test_bv_setBit__args__bv__67) {
+// test: bv_setBit(bv, 67) -- STATIC
+START_TEST(test_bv_setBit__args__bv__67__STATIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
 
     int8_t set_bit_stat = bv_setBit(bv, 67);
@@ -487,8 +487,19 @@ START_TEST(test_bv_setBit__args__bv__67) {
     bv_destroy(bv);
 } END_TEST
 
-// test: bv_setBit(bv, 88)
-START_TEST(test_bv_setBit__args__bv__88) {
+// test: bv_setBit(bv, 67) -- DYNAMIC
+START_TEST(test_bv_setBit__args__bv__67__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    int8_t set_bit_stat = bv_setBit(bv, 67);
+
+    ck_assert_int_eq(set_bit_stat, AND_OK);
+    ck_assert_int_eq(bv_isBitSet(bv, 67), AND_TRUE);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_setBit(bv, 88) -- STATIC
+START_TEST(test_bv_setBit__args__bv__88__STATIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
 
     int8_t set_bit_stat = bv_setBit(bv, 88);
@@ -498,14 +509,59 @@ START_TEST(test_bv_setBit__args__bv__88) {
     bv_destroy(bv);
 } END_TEST
 
-// test: bv_setBit(bv, 23)
-START_TEST(test_bv_setBit__args__bv__23) {
+// test: bv_setBit(bv, 88) -- DYNAMIC
+START_TEST(test_bv_setBit__args__bv__88__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    int8_t set_bit_stat = bv_setBit(bv, 88);
+
+    ck_assert_int_eq(set_bit_stat, AND_OK);
+    ck_assert_int_eq(bv_isBitSet(bv, 89), AND_FALSE);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_setBit(bv, 23) -- STATIC
+START_TEST(test_bv_setBit__args__bv__23__STATIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
 
     int8_t set_bit_stat = bv_setBit(bv, 23);
 
     ck_assert_int_eq(set_bit_stat, AND_OK);
     ck_assert_int_eq(bv_isBitSet(bv, 22), AND_FALSE);
+    bv_destroy(bv);
+} END_TEST
+
+
+// test: bv_setBit(bv, 23) -- DYNAMIC
+START_TEST(test_bv_setBit__args__bv__23__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    int8_t set_bit_stat = bv_setBit(bv, 23);
+
+    ck_assert_int_eq(set_bit_stat, AND_OK);
+    ck_assert_int_eq(bv_isBitSet(bv, 22), AND_FALSE);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_setBit(bv, 256) -- STATIC
+START_TEST(test_bv_setBit__args__bv__256__STATIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    int8_t set_bit_stat = bv_setBit(bv, 256);
+
+    ck_assert_int_eq(set_bit_stat, AND_NOK);
+    ck_assert_int_eq(bv_isBitSet(bv, 256), AND_FALSE);
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_setBit(bv, 256) -- DYNAMIC
+START_TEST(test_bv_setBit__args__bv__256__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    int8_t set_bit_stat = bv_setBit(bv, 256);
+
+    ck_assert_int_eq(set_bit_stat, AND_OK);
+    ck_assert_int_eq(bv_isBitSet(bv, 256), AND_TRUE);
     bv_destroy(bv);
 } END_TEST
 
@@ -518,11 +574,16 @@ Suite* bv_setBit_suite(void) {
 
     tc_failure = tcase_create("Failure");
     tcase_add_test(tc_failure, test_bv_setBit__args__NULL__45);
+    tcase_add_test(tc_failure, test_bv_setBit__args__bv__256__STATIC);
 
     tc_success = tcase_create("Success");
-    tcase_add_test(tc_success, test_bv_setBit__args__bv__67);
-    tcase_add_test(tc_success, test_bv_setBit__args__bv__88);
-    tcase_add_test(tc_success, test_bv_setBit__args__bv__23);
+    tcase_add_test(tc_success, test_bv_setBit__args__bv__67__STATIC);
+    tcase_add_test(tc_success, test_bv_setBit__args__bv__67__DYNAMIC);
+    tcase_add_test(tc_success, test_bv_setBit__args__bv__88__STATIC);
+    tcase_add_test(tc_success, test_bv_setBit__args__bv__88__DYNAMIC);
+    tcase_add_test(tc_success, test_bv_setBit__args__bv__23__STATIC);
+    tcase_add_test(tc_success, test_bv_setBit__args__bv__23__DYNAMIC);
+    tcase_add_test(tc_success, test_bv_setBit__args__bv__256__DYNAMIC);
 
     suite_add_tcase(suite, tc_failure);
     suite_add_tcase(suite, tc_success);
