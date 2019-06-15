@@ -35,7 +35,7 @@ bitvectorptr_t bv_create(size_t vector_size, uint8_t growth_factor, uint8_t load
     }
 
     bv->vector_size = ceil(vector_size/BV_CHUNK_SIZE);
-    bv->buffer = calloc(bv->vector_size, BV_CHUNK_SIZE);
+    bv->buffer = calloc(bv->vector_size, sizeof(uint32_t));
 
     if (!bv->buffer) {
         AND_PRINT_ERR("bv_create", "Failed to allocate memory for buffer")
