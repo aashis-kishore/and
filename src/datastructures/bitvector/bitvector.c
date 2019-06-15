@@ -67,13 +67,9 @@ int8_t bv_isBitClear(bitvectorptr_t bv, size_t index) {
         return AND_NOK;
     }
 
-    size_t chunk_size = sizeof(uint32_t);
-
-    index = index % (bv->vector_size*chunk_size);
-
-    uint32_t mask = 1<<((chunk_size-1) - index);
-
-    return !(bv->buffer[index/chunk_size] & mask);
+    index = index % (bv->vector_size*BV_CHUNK_SIZE);
+    uint32_t mask = 1<<((BV_CHUNK_SIZE-1) - index);
+    return !(bv->buffer[index/BV_CHUNK_SIZE] & mask);
 }
 
 size_t bv_numBitSetInRange(bitvectorptr_t bv, size_t lindex, size_t uindex, int8_t* status) {
