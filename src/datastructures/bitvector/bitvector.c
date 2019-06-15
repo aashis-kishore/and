@@ -52,6 +52,17 @@ bitvectorptr_t bv_create(size_t vector_size, uint8_t growth_factor, uint8_t load
     return bv;
 }
 
+size_t bv_getVectorSize(bitvectorptr_t bv, int8_t* status) {
+    if (!bv) {
+        AND_PRINT_ERR("bv_getVectorSize", "Invalid address as argument")
+        if (status)
+            *status = AND_NOK;
+        return AND_OK;  // OK AND NOK => NOK
+    }
+
+    return bv->vector_size;
+}
+
 int8_t bv_isBitSet(bitvectorptr_t bv, size_t index) {
     if (!bv) {
         AND_PRINT_ERR("bv_isBitSet", "Invalid address as argument")
