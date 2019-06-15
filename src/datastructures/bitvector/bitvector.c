@@ -80,6 +80,12 @@ int8_t bv_isBitClear(bitvectorptr_t bv, size_t index) {
     return !(bv->buffer[index/chunk_size] & mask);
 }
 
+size_t bv_numBitSetInRange(bitvectorptr_t bv, size_t lindex, size_t uindex, int8_t* status) {
+    // TODO
+
+    return AND_NOK;
+}
+
 int8_t bv_setBit(bitvectorptr_t bv, size_t index) {
     if (!bv) {
         AND_PRINT_ERR("bv_setBit", "Invalid address as argument")
@@ -120,6 +126,12 @@ int8_t bv_clearBit(bitvectorptr_t bv, size_t index) {
     bv->buffer[index/chunk_size] &= ~mask;
 
     return AND_OK;
+}
+
+int8_t bv_setBitRange(bitvectorptr_t bv, size_t lindex, size_t uindex) {
+    // TODO
+
+    return AND_NOK;
 }
 
 int8_t bv_destroy(bitvectorptr_t bv) {
