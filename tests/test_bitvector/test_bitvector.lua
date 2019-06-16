@@ -29,3 +29,11 @@ project "test_bitvector"
     files {
         "*.c"
     }
+
+    buildoptions {
+        "--std=c99",
+        "-pedantic",
+        "-Wall",
+        "-Werror",
+        "-g"
+    }
