@@ -115,25 +115,25 @@ size_t bv_numBitsClearInRange(bitvectorptr_t bv, size_t lindex, size_t uindex, i
 }
 
 static bitvectorptr_t _resize(bitvectorptr_t bv, size_t new_vector_size) {
-    void* new_buffer = realloc(bv->buffer, new_vector_size*sizeof(uint32_t));
+    void* new_buffer = calloc(new_vector_size, sizeof(uint32_t));
 
     if (!new_buffer) {
-        AND_PRINT_ERR("_resize", "Unable to resize vector")
+        AND_PRINT_ERR("_resize", "Unable to resize bitvector")
         return AND_PNOK;
     }
 
-    size_t old_vector_size = bv->vector_size;
+    void* memcpy_stat = memcpy(new_buffer, bv->buffer, bv->vector_size*sizeof(uint32_t));
+
+    if (!memcpy_stat) {
+        AND_PRINT_ERR("_resize", "Unable to copy contents of bitvector")
+        return AND_PNOK;
+    }
+    
+    free(bv->buffer);
 
     bv->buffer = new_buffer;
     bv->vector_size = new_vector_size;
     bv->max_size_before_resize = (bv->vector_size*BV_CHUNK_SIZE)*((float)bv->load_factor/100);
-
-    int8_t clear_bit_range_stat = bv_clearBitRange(bv, old_vector_size*BV_CHUNK_SIZE, bv->vector_size-1*BV_CHUNK_SIZE-1);
-
-    if (clear_bit_range_stat == AND_NOK) {
-        AND_PRINT_ERR("bv_setBit", "Unable to clear bit range")
-        return AND_PNOK;
-    }
 
     return bv;
 }
@@ -154,13 +154,16 @@ int8_t bv_setBit(bitvectorptr_t bv, size_t index) {
     }
 
     if (bv->is_dynamic) {
-        size_t new_vector_size = 0;
+        size_t new_vector_size = bv->vector_size;
 
         if (index > bv->vector_size*BV_CHUNK_SIZE-1) {
-            size_t prospective_last_index = bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100-1;
-            size_t reach_index_factor = ceil((float)index / prospective_last_index);
+            size_t prospective_last_index;
 
-            new_vector_size = ceil((reach_index_factor*bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
+            do {
+                prospective_last_index = new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100-1;
+                new_vector_size = ceil((new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
+            } while(index > prospective_last_index);
+
         } else if (bv->num_bits_set > bv->max_size_before_resize)
             new_vector_size = ceil((bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
 
@@ -204,10 +207,12 @@ int8_t bv_clearBit(bitvectorptr_t bv, size_t index) {
 
     if (bv->is_dynamic) {
         if (index > bv->vector_size*BV_CHUNK_SIZE-1) {
-            size_t prospective_last_index = bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100-1;
-            size_t reach_index_factor = ceil((float)index / prospective_last_index);
+            size_t new_vector_size = bv->vector_size, prospective_last_index;
 
-            size_t new_vector_size = ceil((reach_index_factor*bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
+            do {
+                prospective_last_index = new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100-1;
+                new_vector_size = ceil((new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
+            } while(index > prospective_last_index);
 
             bitvectorptr_t new_bv = _resize(bv, new_vector_size);
             
