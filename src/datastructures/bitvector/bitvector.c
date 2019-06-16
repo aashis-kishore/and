@@ -60,6 +60,9 @@ size_t bv_getVectorSize(bitvectorptr_t bv, int8_t* status) {
         return AND_OK;  // OK AND NOK => NOK
     }
 
+    if (status)
+        *status = AND_OK;
+
     return bv->vector_size;
 }
 
