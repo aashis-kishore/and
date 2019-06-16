@@ -1032,6 +1032,7 @@ Suite* bv_clearBit_suite(void) {
     tcase_add_test(tc_success, test_bv_clearBit__args__bv__12__DYNAMIC);
     tcase_add_test(tc_success, test_bv_clearBit__args__bv__255__STATIC);
     tcase_add_test(tc_success, test_bv_clearBit__args__bv__255__DYNAMIC);
+    tcase_add_test(tc_failure, test_bv_clearBit__args__bv__256__DYNAMIC);
 
     suite_add_tcase(suite, tc_failure);
     suite_add_tcase(suite, tc_success);
