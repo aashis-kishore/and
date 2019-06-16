@@ -148,8 +148,17 @@ int8_t bv_setBit(bitvectorptr_t bv, size_t index) {
     }
 
     if (bv->is_dynamic) {
-        if (bv->num_bits_set > bv->max_size_before_resize) {
-            size_t new_vector_size = ceil(((bv->vector_size*BV_CHUNK_SIZE)*((float)bv->growth_factor/100))/BV_CHUNK_SIZE);
+        size_t new_vector_size = 0;
+
+        if (index > bv->vector_size*BV_CHUNK_SIZE-1) {
+            size_t prospective_last_index = bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100-1;
+            size_t reach_index_factor = ceil((float)index / prospective_last_index);
+
+            new_vector_size = ceil((reach_index_factor*bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
+        } else if (bv->num_bits_set > bv->max_size_before_resize)
+            new_vector_size = ceil((bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
+
+        if (bv->vector_size < new_vector_size) {
             bitvectorptr_t new_bv = _resize(bv, new_vector_size);
             
             if (!new_bv) {
