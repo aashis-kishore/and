@@ -464,7 +464,7 @@ START_TEST(test_bv_getNumBitsSet__args__bv__stat) {
     bv_setBit(bv, 5);
     bv_setBit(bv, 190);
 
-    int8_t get_num_bits_set_stat;
+    int8_t get_num_bits_set_stat = AND_NOK;
     size_t num_bits_set = bv_getNumBitsSet(bv, &get_num_bits_set_stat);
     ck_assert_int_eq(num_bits_set, 4);
     ck_assert_int_eq(get_num_bits_set_stat, AND_OK);
@@ -484,7 +484,7 @@ START_TEST(test_bv_getNumBitsSet__args__bv__stat__POST_SETBIT_RESIZE) {
     bv_setBit(bv, 256);
     bv_setBit(bv, 289);
 
-    int8_t get_num_bits_set_stat;
+    int8_t get_num_bits_set_stat = AND_NOK;
     size_t num_bits_set = bv_getNumBitsSet(bv, &get_num_bits_set_stat);
     ck_assert_int_eq(num_bits_set, 7);
     ck_assert_int_eq(get_num_bits_set_stat, AND_OK);
