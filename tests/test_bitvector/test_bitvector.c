@@ -388,7 +388,7 @@ START_TEST(test_bv_getVectorSize__args__bv__NULL) {
 // test: bv_getVectorSize(bv, stat)
 START_TEST(test_bv_getVectorSize__args__bv__stat) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
-    int8_t get_vector_size_stat;
+    int8_t get_vector_size_stat = AND_NOK;
 
     size_t vector_size = bv_getVectorSize(bv, &get_vector_size_stat);
     ck_assert_int_eq(get_vector_size_stat, AND_OK);
@@ -399,7 +399,7 @@ START_TEST(test_bv_getVectorSize__args__bv__stat) {
 // test: bv_getVectorSize(bv, stat) -- POST RESIZE
 START_TEST(test_bv_getVectorSize__args__bv__stat__POST_RESIZE) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
-    int8_t get_vector_size_stat;
+    int8_t get_vector_size_stat = AND_NOK;
 
     bv_setBit(bv, 256);
 
