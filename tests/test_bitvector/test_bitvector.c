@@ -398,7 +398,7 @@ START_TEST(test_bv_getVectorSize__args__bv__stat) {
 
 // test: bv_getVectorSize(bv, stat) -- POST RESIZE
 START_TEST(test_bv_getVectorSize__args__bv__stat__POST_RESIZE) {
-    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
     int8_t get_vector_size_stat;
 
     bv_setBit(bv, 256);
