@@ -196,6 +196,22 @@ int8_t bv_clearBit(bitvectorptr_t bv, size_t index) {
         }
     }
 
+    if (bv->is_dynamic) {
+        if (index > bv->vector_size*BV_CHUNK_SIZE-1) {
+            size_t prospective_last_index = bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100-1;
+            size_t reach_index_factor = ceil((float)index / prospective_last_index);
+
+            size_t new_vector_size = ceil((reach_index_factor*bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
+
+            bitvectorptr_t new_bv = _resize(bv, new_vector_size);
+            
+            if (!new_bv) {
+                AND_PRINT_ERR("bv_clearBit", "Vector resizing failed")
+                return AND_NOK;
+            }
+        }
+    }
+
     index = index % (bv->vector_size*BV_CHUNK_SIZE);
 
     uint32_t mask = 1<<((BV_CHUNK_SIZE-1) - index);
