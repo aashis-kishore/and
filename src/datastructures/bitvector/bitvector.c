@@ -74,6 +74,9 @@ size_t bv_getNumBitsSet(bitvectorptr_t bv, int8_t* status) {
         return AND_OK;
     }
 
+    if (status)
+        *status = AND_OK;
+
     return bv->num_bits_set;
 }
 
