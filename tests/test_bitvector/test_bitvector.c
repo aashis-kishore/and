@@ -590,13 +590,14 @@ START_TEST(test_bv_isBitClear__args__bv__12) {
     bv_destroy(bv);
 } END_TEST
 
-// test: bv_isBitClear(bv, 35)
-START_TEST(test_bv_isBitClear__args__bv__35) {
-    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+// test: bv_isBitClear(bv, 289)
+START_TEST(test_bv_isBitClear__args__bv__289) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
 
-    bv_setBit(bv, 35);
+    bv_setBit(bv, 500);
 
-    ck_assert_int_eq(bv_isBitClear(bv, 35), AND_FALSE);
+    ck_assert_int_eq(bv_getVectorSize(bv, NULL), 18);
+    ck_assert_int_eq(bv_isBitClear(bv, 500), AND_FALSE);
     bv_destroy(bv);
 } END_TEST
 
@@ -613,7 +614,7 @@ Suite* bv_isBitClear_suite(void) {
 
     tc_success = tcase_create("Success");
     tcase_add_test(tc_success, test_bv_isBitClear__args__bv__12);
-    tcase_add_test(tc_success, test_bv_isBitClear__args__bv__35);
+    tcase_add_test(tc_success, test_bv_isBitClear__args__bv__289);
 
     suite_add_tcase(suite, tc_failure);
     suite_add_tcase(suite, tc_success);
