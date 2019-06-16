@@ -16,6 +16,14 @@ project "bitvector"
 
         symbols "On"
 
+        buildoptions {
+            "--std=c99",
+            "-pedantic",
+            "-Wall",
+            "-Werror",
+            "-g",
+        }
+
     filter "configurations:release"
         defines {
             "NDEBUG"
@@ -23,17 +31,17 @@ project "bitvector"
 
         optimize "On"
 
+        buildoptions {
+            "--std=c99",
+            "-pedantic",
+            "-Wall",
+            "-Werror"
+        }
+
     filter {}
 
     files {
         "*.c"
-    }
-
-    buildoptions {
-        "--std=c99",
-        "-pedantic",
-        "-Wall",
-        "-Werror"
     }
 
     postbuildcommands {
