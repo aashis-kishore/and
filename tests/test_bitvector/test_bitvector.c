@@ -749,6 +749,7 @@ START_TEST(test_bv_numBitsClearInRange__args__bv__0__289__stat__DYNAMIC) {
     int8_t num_bit_clear_in_range_stat;
     size_t num_bits_clear_in_range = bv_numBitsClearInRange(bv, 0, 289, &num_bit_clear_in_range_stat);
     ck_assert_int_eq(num_bit_clear_in_range_stat, AND_NOK);
+    ck_assert_int_eq(num_bits_clear_in_range, 290);
     ck_assert_int_eq(bv_getVectorSize(bv, NULL), 12);
 
     bv_destroy(bv);
