@@ -18,12 +18,14 @@ project "test_bitvector"
 
     libdirs {
         "%{wks.location}/dev_dependencies/check/lib",
-        "%{wks.location}/build/%{cfg.buildcfg}/lib/bitvector/lib"
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/bitvector/lib",
+        "%{wks.location}/dev_dependencies/viewmemutils/lib"
     }
 
     links {
         "check", "m", "rt",
-        "bitvector"
+        "bitvector",
+        "viewmemutils"
     }
 
     files {
