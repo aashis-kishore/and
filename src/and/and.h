@@ -20,7 +20,7 @@ typedef enum {
 
 #ifdef DEBUG
     #include <stdio.h>
-    #include "viewmemutils"
+    #include "./viewmemutils/viewmemutils.h"
     
     #define AND_PRINT(msg) printf("%s\n", msg);
     #define AND_PRINT_ERR(func_name, err_msg) printf("[ERROR] : [%s] => %s.\n", func_name, err_msg);
