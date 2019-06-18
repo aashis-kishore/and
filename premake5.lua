@@ -5,6 +5,9 @@ workspace "algorithms_n_datastructures"
 -- dev_util projects
 dofile("./src/and/viewmemutils/viewmemutils.lua")                                       -- viewmemutils
 
+-- dev_util project tests
+dofile("./tests/test_viewmemutils/test_viewmemutils.lua")                               -- test_viewmemutils
+
 
 -- src projects
 dofile("./src/datastructures/stack/array/static_stack/static_stack.lua")
