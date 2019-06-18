@@ -14,6 +14,14 @@ project "bitvector"
             "DEBUG"
         }
 
+        libdirs {
+            "%{wks.location}/dev_dependencies/viewmemutils/lib"
+        }
+
+        links {
+            "viewmemutils"
+        }
+
         symbols "On"
 
         buildoptions {
