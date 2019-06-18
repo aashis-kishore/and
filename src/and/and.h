@@ -8,6 +8,7 @@
 #define AND_OK ((int8_t)0)
 #define AND_NOK ((int8_t)-1)
 #define AND_PNOK ((void*)0)
+#define AND_ZERO ((size_t)0)
 
 typedef enum {
     AND_FALSE = 0,
