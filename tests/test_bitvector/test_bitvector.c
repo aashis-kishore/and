@@ -625,6 +625,371 @@ Suite* bv_isBitClear_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [bv_numBitsSetInRange(bitvectorptr_t, size_t, size_t, int8_t*)]
+// test: bv_numBitsSetInRange(NULL, 45, 90, NULL)
+START_TEST(test_bv_numBitsSetInRange__args__NULL__45__90__NULL) {
+    ck_assert_int_eq(bv_numBitsSetInRange(NULL, 45, 90, NULL), AND_ZERO);
+} END_TEST
+
+// test: bv_numBitsSetInRange(NULL, 45, 90, stat)
+START_TEST(test_bv_numBitsSetInRange__args__NULL__45__90__stat) {
+    int8_t num_bits_set_in_range_stat = AND_NOK;
+    ck_assert_int_eq(bv_numBitsSetInRange(NULL, 45, 90, &num_bits_set_in_range_stat), AND_ZERO);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 167, 167, NULL)
+START_TEST(test_bv_numBitsSetInRange__args__bv__167__167__NULL) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 167);
+
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 167, 167, NULL);
+
+    ck_assert_int_eq(num_bits_set_in_range, AND_ZERO);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 167, 167, stat)
+START_TEST(test_bv_numBitsSetInRange__args__bv__167__167__stat) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 167);
+
+    int8_t num_bits_set_in_range_stat = AND_OK;
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 167, 167, &num_bits_set_in_range_stat);
+
+    ck_assert_int_eq(num_bits_set_in_range_stat, AND_NOK);
+    ck_assert_int_eq(num_bits_set_in_range, AND_ZERO);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 255, 200, NULL)
+START_TEST(test_bv_numBitsSetInRange__args__bv__255__200__NULL) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 255);
+    bv_setBit(bv, 200);
+
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 255, 200, NULL);
+
+    ck_assert_int_eq(num_bits_set_in_range, AND_ZERO);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 255, 200, stat)
+START_TEST(test_bv_numBitsSetInRange__args__bv__255__200__stat) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 255);
+    bv_setBit(bv, 200);
+
+    int8_t num_bits_set_in_range_stat = AND_OK;
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 255, 200, &num_bits_set_in_range_stat);
+
+    ck_assert_int_eq(num_bits_set_in_range_stat, AND_NOK);
+    ck_assert_int_eq(num_bits_set_in_range, AND_ZERO);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 0, 300, NULL)
+START_TEST(test_bv_numBitsSetInRange__args__bv__0__300__NULL) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 300);
+
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 0, 300, NULL);
+
+    ck_assert_int_eq(num_bits_set_in_range, AND_ZERO);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 0, 300, stat)
+START_TEST(test_bv_numBitsSetInRange__args__bv__0__300__stat) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 300);
+
+    int8_t num_bits_set_in_range_stat = AND_OK;
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 0, 300, &num_bits_set_in_range_stat);
+
+    ck_assert_int_eq(num_bits_set_in_range_stat, AND_NOK);
+    ck_assert_int_eq(num_bits_set_in_range, AND_ZERO);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 129, 190, NULL) -- STATIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__129__190__NULL__STATIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 129);
+    bv_setBit(bv, 145);
+    bv_setBit(bv, 190);
+
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 129, 190, NULL);
+
+    ck_assert_int_eq(num_bits_set_in_range, 3);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 129, 190, NULL) -- DYNAMIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__129__190__NULL__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    bv_setBit(bv, 129);
+    bv_setBit(bv, 145);
+    bv_setBit(bv, 190);
+
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 129, 190, NULL);
+
+    ck_assert_int_eq(num_bits_set_in_range, 3);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 129, 190, stat) -- STATIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__129__190__stat__STATIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 129);
+    bv_setBit(bv, 145);
+    bv_setBit(bv, 190);
+
+    int8_t num_bits_set_in_range_stat = AND_NOK;
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 129, 190, &num_bits_set_in_range_stat);
+
+    ck_assert_int_eq(num_bits_set_in_range_stat, AND_OK);
+    ck_assert_int_eq(num_bits_set_in_range, 3);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 129, 190, stat) -- DYNAMIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__129__190__stat__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    bv_setBit(bv, 129);
+    bv_setBit(bv, 145);
+    bv_setBit(bv, 190);
+
+    int8_t num_bits_set_in_range_stat = AND_NOK;
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 129, 190, &num_bits_set_in_range_stat);
+
+    ck_assert_int_eq(num_bits_set_in_range_stat, AND_OK);
+    ck_assert_int_eq(num_bits_set_in_range, 3);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 0, 255, NULL) -- STATIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__0__255__NULL__STATIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 145);
+    bv_setBit(bv, 190);
+    bv_setBit(bv, 8);
+    bv_setBit(bv, 232);
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 255);
+
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 0, 255, NULL);
+
+    ck_assert_int_eq(num_bits_set_in_range, 6);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 0, 255, NULL) -- DYNAMIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__0__255__NULL__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 145);
+    bv_setBit(bv, 190);
+    bv_setBit(bv, 8);
+    bv_setBit(bv, 232);
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 255);
+
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 0, 255, NULL);
+
+    ck_assert_int_eq(num_bits_set_in_range, 6);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 0, 255, stat) -- STATIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__0__255__stat__STATIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 145);
+    bv_setBit(bv, 190);
+    bv_setBit(bv, 8);
+    bv_setBit(bv, 232);
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 255);
+
+    int8_t num_bits_set_in_range_stat = AND_NOK;
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 0, 255, &num_bits_set_in_range_stat);
+
+    ck_assert_int_eq(num_bits_set_in_range_stat, AND_OK);
+    ck_assert_int_eq(num_bits_set_in_range, 6);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 0, 255, stat) -- DYNAMIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__0__255__stat__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 145);
+    bv_setBit(bv, 190);
+    bv_setBit(bv, 8);
+    bv_setBit(bv, 232);
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 255);
+
+    int8_t num_bits_set_in_range_stat = AND_NOK;
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 0, 255, &num_bits_set_in_range_stat);
+
+    ck_assert_int_eq(num_bits_set_in_range_stat, AND_OK);
+    ck_assert_int_eq(num_bits_set_in_range, 6);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 128, 200, NULL) -- STATIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__128__200__NULL__STATIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 128);
+    bv_setBit(bv, 145);
+    bv_setBit(bv, 190);
+    bv_setBit(bv, 8);
+    bv_setBit(bv, 232);     // set an out of range bit
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 200);
+
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 128, 200, NULL);
+
+    ck_assert_int_eq(num_bits_set_in_range, 5);
+    ck_assert_int_eq(bv_getVectorSize(bv, NULL), 8);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 128, 200, NULL) -- DYNAMIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__128__200__NULL__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    bv_setBit(bv, 128);
+    bv_setBit(bv, 145);
+    bv_setBit(bv, 190);
+    bv_setBit(bv, 8);
+    bv_setBit(bv, 232);     // set an out of range bit
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 200);
+
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 128, 200, NULL);
+
+    ck_assert_int_eq(num_bits_set_in_range, 5);
+    ck_assert_int_eq(bv_getVectorSize(bv, NULL), 8);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 128, 200, stat) -- STATIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__128__200__stat__STATIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 128);
+    bv_setBit(bv, 145);
+    bv_setBit(bv, 190);
+    bv_setBit(bv, 8);
+    bv_setBit(bv, 232);     // set an out of range bit
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 200);
+
+    int8_t num_bits_set_in_range_stat = AND_NOK;
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 128, 200, &num_bits_set_in_range_stat);
+
+    ck_assert_int_eq(num_bits_set_in_range_stat, AND_OK);
+    ck_assert_int_eq(num_bits_set_in_range, 5);
+    ck_assert_int_eq(bv_getVectorSize(bv, NULL), 8);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 128, 200, stat) -- DYNAMIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__128__200__stat_DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    bv_setBit(bv, 128);
+    bv_setBit(bv, 145);
+    bv_setBit(bv, 190);
+    bv_setBit(bv, 8);
+    bv_setBit(bv, 232);     // set an out of range bit
+    bv_setBit(bv, 0);
+    bv_setBit(bv, 200);
+
+    int8_t num_bits_set_in_range_stat = AND_NOK;
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 128, 200, &num_bits_set_in_range_stat);
+
+    ck_assert_int_eq(num_bits_set_in_range_stat, AND_OK);
+    ck_assert_int_eq(num_bits_set_in_range, 5);
+    ck_assert_int_eq(bv_getVectorSize(bv, NULL), 8);
+
+    bv_destroy(bv);
+} END_TEST
+
+
+Suite* bv_numBitsSetInRange_suite(void) {
+    Suite* suite = suite_create("NumBitsSetInRange");
+    TCase *tc_failure, *tc_success;
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_bv_numBitsSetInRange__args__NULL__45__90__NULL);
+    tcase_add_test(tc_failure, test_bv_numBitsSetInRange__args__NULL__45__90__stat);
+    tcase_add_test(tc_failure, test_bv_numBitsSetInRange__args__bv__167__167__NULL);
+    tcase_add_test(tc_failure, test_bv_numBitsSetInRange__args__bv__167__167__stat);
+    tcase_add_test(tc_failure, test_bv_numBitsSetInRange__args__bv__255__200__NULL);
+    tcase_add_test(tc_failure, test_bv_numBitsSetInRange__args__bv__255__200__stat);
+    tcase_add_test(tc_failure, test_bv_numBitsSetInRange__args__bv__0__300__NULL);
+    tcase_add_test(tc_failure, test_bv_numBitsSetInRange__args__bv__0__300__stat);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__129__190__NULL__STATIC);
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__129__190__NULL__DYNAMIC);
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__129__190__stat__STATIC);
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__129__190__stat__DYNAMIC);
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__0__255__NULL__STATIC);
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__0__255__NULL__DYNAMIC);
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__0__255__stat__STATIC);
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__0__255__stat__DYNAMIC);
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__128__200__NULL__STATIC);
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__128__200__NULL__DYNAMIC);
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__128__200__stat__STATIC);
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__128__200__stat_DYNAMIC);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+// ==================================================================================================
+
+
 // ================================================================================================== [bv_numBitsClearInRange(bitvectorptr_t, size_t, size_t, int8_t*)]
 // test: bv_numBitsClearInRange(NULL, 5, 90, NULL)
 START_TEST(test_bv_numBitsClearInRange__args__NULL__5__90__NULL) {
@@ -1447,6 +1812,7 @@ int main(int argc, char** argv) {
     srunner_add_suite(suite_runner, bv_getNumBitsSet_suite());
     srunner_add_suite(suite_runner, bv_isBitSet_suite());
     srunner_add_suite(suite_runner, bv_isBitClear_suite());
+    srunner_add_suite(suite_runner, bv_numBitsSetInRange_suite());
     srunner_add_suite(suite_runner, bv_numBitsClearInRange_suite());
     srunner_add_suite(suite_runner, bv_setBit_suite());
     srunner_add_suite(suite_runner, bv_clearBit_suite());
