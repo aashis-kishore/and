@@ -109,9 +109,54 @@ size_t bv_numBitsSetInRange(bitvectorptr_t bv, size_t lindex, size_t uindex, int
 }
 
 size_t bv_numBitsClearInRange(bitvectorptr_t bv, size_t lindex, size_t uindex, int8_t* status) {
-    // TODO
+    if (status)
+        *status = AND_NOK;
+
+    if (!bv) {
+        AND_PRINT_ERR("bv_numBitsClearRange", "Invalid address as argument")
+        return AND_ZERO;
+    }
+
+    if (lindex >= uindex) {
+        AND_PRINT_ERR("bv_numBitsClearRange", "Index values not allowed")
+        return AND_ZERO;
+    }
+
+    if (uindex >= bv->vector_size*BV_CHUNK_SIZE) {
+        AND_PRINT_ERR("bv_numBitsClearRange", "Index out of bounds")
+        return AND_ZERO;
+    }
+
+    size_t chunk_lindex = lindex/BV_CHUNK_SIZE, chunk_uindex = uindex/BV_CHUNK_SIZE, num_bits_clear_in_range = 0;
+    size_t shift_factor;
+    uint32_t mask, remnant_bits;
+
+    for (size_t index = chunk_lindex; index <= chunk_uindex; index++) {
+        if (index == chunk_lindex && lindex != 0) {
+            shift_factor = (index+1)*BV_CHUNK_SIZE - lindex;
+            mask = (1<<shift_factor) - 1;
+            remnant_bits = bv->buffer[index] & mask;
+        } else if (index == chunk_uindex) {
+            shift_factor = (index+1)*BV_CHUNK_SIZE - uindex;
+            mask = (1<<shift_factor) - 1;
+            remnant_bits = bv->buffer[index] & ~mask;
+        } else {
+            remnant_bits = bv->buffer[index] & ~0;
+        }
+
+        for (uint8_t i=0; i<BV_CHUNK_SIZE; i++) {
+            if (!(remnant_bits&1))
+                num_bits_clear_in_range++;
+            remnant_bits >>= 1;
+        }
+    }
+
+    num_bits_clear_in_range -= (lindex - chunk_lindex*BV_CHUNK_SIZE) + ((chunk_uindex+1)*BV_CHUNK_SIZE - uindex -1);
+
+    if (status)
+        *status = AND_OK;
     
-    return AND_NOK;
+    return num_bits_clear_in_range;
 }
 
 static bitvectorptr_t _resize(bitvectorptr_t bv, size_t new_vector_size) {
