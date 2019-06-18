@@ -1013,6 +1013,52 @@ START_TEST(test_bv_numBitsSetInRange__args__bv__129__200__stat_DYNAMIC) {
     bv_destroy(bv);
 } END_TEST
 
+// test: bv_numBitsSetInRange(bv, 4, 28, NULL) -- STATIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__4__28__NULL__STATIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 3);
+    bv_setBit(bv, 8);
+    bv_setBit(bv, 14);
+    bv_setBit(bv, 19);
+    bv_setBit(bv, 29);
+
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 4, 28, NULL);
+
+    ck_assert_int_eq(bv_isBitSet(bv, 3), AND_TRUE);
+    ck_assert_int_eq(bv_isBitSet(bv, 8), AND_TRUE);
+    ck_assert_int_eq(bv_isBitSet(bv, 14), AND_TRUE);
+    ck_assert_int_eq(bv_isBitSet(bv, 19), AND_TRUE);
+    ck_assert_int_eq(bv_isBitSet(bv, 29), AND_TRUE);
+    ck_assert_int_eq(num_bits_set_in_range, 3);
+    ck_assert_int_eq(bv_getVectorSize(bv, NULL), 8);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_numBitsSetInRange(bv, 257, 285, NULL) -- DYNAMIC
+START_TEST(test_bv_numBitsSetInRange__args__bv__257__285__NULL__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    bv_setBit(bv, 256);
+    bv_setBit(bv, 278);
+    bv_setBit(bv, 263);
+    bv_setBit(bv, 287);
+    bv_setBit(bv, 285);
+
+    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 257, 285, NULL);
+
+    ck_assert_int_eq(bv_isBitSet(bv, 256), AND_TRUE);
+    ck_assert_int_eq(bv_isBitSet(bv, 278), AND_TRUE);
+    ck_assert_int_eq(bv_isBitSet(bv, 263), AND_TRUE);
+    ck_assert_int_eq(bv_isBitSet(bv, 287), AND_TRUE);
+    ck_assert_int_eq(bv_isBitSet(bv, 285), AND_TRUE);
+    ck_assert_int_eq(num_bits_set_in_range, 3);
+    ck_assert_int_eq(bv_getVectorSize(bv, NULL), 12);
+
+    bv_destroy(bv);
+} END_TEST
+
 
 Suite* bv_numBitsSetInRange_suite(void) {
     Suite* suite = suite_create("NumBitsSetInRange");
@@ -1041,7 +1087,9 @@ Suite* bv_numBitsSetInRange_suite(void) {
     tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__128__200__NULL__DYNAMIC);
     tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__129__200__stat__STATIC);
     tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__129__200__stat_DYNAMIC);
-
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__4__28__NULL__STATIC);
+    tcase_add_test(tc_success, test_bv_numBitsSetInRange__args__bv__257__285__NULL__DYNAMIC);
+    
     suite_add_tcase(suite, tc_failure);
     suite_add_tcase(suite, tc_success);
 
