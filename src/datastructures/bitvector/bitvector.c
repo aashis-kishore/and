@@ -129,6 +129,13 @@ size_t bv_numBitsSetInRange(bitvectorptr_t bv, size_t lindex, size_t uindex, int
         if (index == chunk_lindex && (lindex % BV_CHUNK_SIZE) != 0) {
             shift_factor = (index+1)*BV_CHUNK_SIZE - lindex;
             mask = (1<<shift_factor) - 1;
+
+            if (chunk_lindex == chunk_uindex) {
+                shift_factor = (index+1)*BV_CHUNK_SIZE - uindex - 1;
+                uint32_t mask2 = (1<<shift_factor) - 1;
+                mask &= ~mask2;
+            }
+
             remnant_bits = bv->buffer[index] & mask;
         } else if (index == chunk_uindex) {
             shift_factor = (index+1)*BV_CHUNK_SIZE - uindex - 1;
