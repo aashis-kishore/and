@@ -2,6 +2,10 @@ workspace "algorithms_n_datastructures"
     configurations { "debug", "release" }
 
 
+-- dev_util projects
+dofile("./src/and/viewmemutils/viewmemutils.lua")                                       -- viewmemutils
+
+
 -- src projects
 dofile("./src/datastructures/stack/array/static_stack/static_stack.lua")
 dofile("./src/datastructures/array/dynamic_array/dynamic_array.lua")                  -- dynamic_array
