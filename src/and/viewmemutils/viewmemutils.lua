@@ -14,7 +14,6 @@ project "viewmemutils"
 
         buildoptions {
             "--std=c99",
-            "-pedantic",
             "-Wall",
             "-Werror",
             "-g",
