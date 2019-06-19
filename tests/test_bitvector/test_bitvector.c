@@ -1978,6 +1978,89 @@ Suite* bv_clearBitRange_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [bv_toggleBitRange(bitvectorptr_t, size_t, size_t)]
+// test: bv_toggleBitRange(NULL, 34, 90)
+START_TEST(test_bv_toggleBitRange__args__NULL__34__90) {
+    ck_assert_int_eq(bv_toggleBitRange(NULL, 34, 90), AND_NOK);
+} END_TEST
+
+// test: bv_toggleBitRange(bv, 0, 256)
+START_TEST(test_bv_toggleBitRange__args__bv__0__256) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    ck_assert_int_eq(bv_toggleBitRange(bv, 0, 256), AND_NOK);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_toggleBitRange(bv, 4, 21)
+START_TEST(test_bv_toggleBitRange__args__bv__4__21) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_clearBitRange(bv, 4, 21);
+    bv_setBitRange(bv, 0, 7);
+    bv_setBitRange(bv, 15, 18);
+
+    ck_assert_int_eq(bv_toggleBitRange(bv, 4, 21), AND_OK);
+    ck_assert_int_eq(bv_numBitsSetInRange(bv, 4, 21, NULL), 10);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_toggleBitRange(bv, 60, 72)
+START_TEST(test_bv_toggleBitRange__args__bv__60__72) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_clearBitRange(bv, 55, 74);
+    bv_setBitRange(bv, 58, 62);
+    bv_setBitRange(bv, 70, 72);
+
+    ck_assert_int_eq(bv_toggleBitRange(bv, 60, 72), AND_OK);
+    ck_assert_int_eq(bv_numBitsSetInRange(bv, 60, 72, NULL), 7);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_toggleBitRange(bv, 200, 325) -- DYNAMIC
+START_TEST(test_bv_toggleBitRange__args__bv__200__325__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_clearBitRange(bv, 200, 325);
+    bv_setBitRange(bv, 198, 201);
+    bv_setBitRange(bv, 320, 326);
+
+    ck_assert_int_eq(bv_toggleBitRange(bv, 200, 325), AND_OK);
+    ck_assert_int_eq(bv_numBitsSetInRange(bv, 200, 325, NULL), 118);
+    ck_assert_int_eq(bv_getVectorSize(bv, NULL), 12);
+
+    bv_destroy(bv);
+} END_TEST
+
+
+Suite* bv_toggleBitRange_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("ToggleBitRange");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_bv_toggleBitRange__args__NULL__34__90);
+    tcase_add_test(tc_failure, test_bv_toggleBitRange__args__bv__0__256);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_bv_toggleBitRange__args__bv__4__21);
+    tcase_add_test(tc_success, test_bv_toggleBitRange__args__bv__60__72);
+    tcase_add_test(tc_success, test_bv_toggleBitRange__args__bv__200__325__DYNAMIC);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [bv_destroy(bitvectorptr_t)]
 // test: bv_destroy(NULL)
 START_TEST(test_bv_destroy__args__NULL) {
@@ -2031,6 +2114,7 @@ int main(int argc, char** argv) {
     srunner_add_suite(suite_runner, bv_toggleBit_suite());
     srunner_add_suite(suite_runner, bv_setBitRange_suite());
     srunner_add_suite(suite_runner, bv_clearBitRange_suite());
+    srunner_add_suite(suite_runner, bv_toggleBitRange_suite());
     srunner_add_suite(suite_runner, bv_destroy_suite());
 
     if (argc == 1) {
