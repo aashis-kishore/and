@@ -1785,7 +1785,7 @@ START_TEST(test_bv_clearBitRange__args__bv__10__89__STATIC) {
 
     int8_t clear_bit_range_stat = bv_clearBitRange(bv, 10, 89);
     
-    int8_t num_bits_clear_in_range_stat;
+    int8_t num_bits_clear_in_range_stat = AND_NOK;
     size_t num_bits_clear_in_range = bv_numBitsClearInRange(bv, 10, 89, &num_bits_clear_in_range_stat);
 
     ck_assert_int_eq(clear_bit_range_stat, AND_OK);
@@ -1801,7 +1801,7 @@ START_TEST(test_bv_clearBitRange__args__bv__10__89__DYNAMIC) {
 
     int8_t clear_bit_range_stat = bv_clearBitRange(bv, 10, 89);
     
-    int8_t num_bits_clear_in_range_stat;
+    int8_t num_bits_clear_in_range_stat = AND_NOK;
     size_t num_bits_clear_in_range = bv_numBitsClearInRange(bv, 10, 89, &num_bits_clear_in_range_stat);
 
     ck_assert_int_eq(clear_bit_range_stat, AND_OK);
@@ -1817,7 +1817,7 @@ START_TEST(test_bv_clearBitRange__args__bv__0__255__STATIC) {
 
     int8_t clear_bit_range_stat = bv_clearBitRange(bv, 0, 255);
     
-    int8_t num_bits_clear_in_range_stat;
+    int8_t num_bits_clear_in_range_stat = AND_NOK;
     size_t num_bits_clear_in_range = bv_numBitsClearInRange(bv, 0, 255, &num_bits_clear_in_range_stat);
 
     ck_assert_int_eq(clear_bit_range_stat, AND_OK);
@@ -1831,9 +1831,11 @@ START_TEST(test_bv_clearBitRange__args__bv__0__255__STATIC) {
 START_TEST(test_bv_clearBitRange__args__bv__0__255__DYNAMIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
 
+    ck_assert_int_eq(bv_setBitRange(bv, 0, 200), AND_OK);
+
     int8_t clear_bit_range_stat = bv_clearBitRange(bv, 0, 255);
     
-    int8_t num_bits_clear_in_range_stat;
+    int8_t num_bits_clear_in_range_stat = AND_NOK;
     size_t num_bits_clear_in_range = bv_numBitsClearInRange(bv, 0, 255, &num_bits_clear_in_range_stat);
 
     ck_assert_int_eq(clear_bit_range_stat, AND_OK);
@@ -1849,7 +1851,7 @@ START_TEST(test_bv_clearBitRange__args__bv__78__256__STATIC) {
 
     int8_t clear_bit_range_stat = bv_clearBitRange(bv, 78, 256);
     
-    int8_t num_bits_clear_in_range_stat;
+    int8_t num_bits_clear_in_range_stat = AND_OK;
     bv_numBitsClearInRange(bv, 78, 256, &num_bits_clear_in_range_stat);
 
     ck_assert_int_eq(clear_bit_range_stat, AND_NOK);
@@ -1862,9 +1864,12 @@ START_TEST(test_bv_clearBitRange__args__bv__78__256__STATIC) {
 START_TEST(test_bv_clearBitRange__args__bv__78__256__DYNAMIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
 
+    ck_assert_int_eq(bv_setBitRange(bv, 0, 78), AND_OK);
+    ck_assert_int_eq(bv_setBitRange(bv, 257, 300), AND_OK);
+
     int8_t clear_bit_range_stat = bv_clearBitRange(bv, 78, 256);
     
-    int8_t num_bits_clear_in_range_stat;
+    int8_t num_bits_clear_in_range_stat = AND_NOK;
     size_t num_bits_clear_in_range = bv_numBitsClearInRange(bv, 78, 256, &num_bits_clear_in_range_stat);
 
     ck_assert_int_eq(clear_bit_range_stat, AND_OK);
