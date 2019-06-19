@@ -43,3 +43,29 @@ sarrayptr_t sa_create(size_t num_elements, size_t element_size) {
 
     return sarr;
 }
+
+int8_t sa_destroy(sarrayptr_t sarr, AND_BOOL has_mem_alloced_element) {
+    if (!sarr) {
+        AND_PRINT_ERR("sa_destroy", "Invalid array address")
+        return AND_NOK;
+    }
+
+    if (has_mem_alloced_element) {
+        for (size_t i=0; i < sarr->num_elements; i++) {
+            int8_t status = bv_isBitSet(sarr->bv, i);
+            if (status != AND_NOK && status == AND_TRUE) {
+                void* currnt_elmnt = (void*)(*((uintptr_t*)sarr->buffer + i));
+                free(currnt_elmnt);
+            }
+        }
+    }
+
+    if (bv_destroy(sarr->bv) == AND_NOK) {
+        AND_PRINT_WARN("sa_destroy", "Unable to destroy auxiliary => (bitvector)")
+    }
+
+    free(sarr->buffer);
+    free(sarr);
+
+    return AND_OK;
+}
