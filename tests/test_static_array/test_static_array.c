@@ -134,6 +134,60 @@ Suite* sa_insert_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [sa_get(sarrayptr_t, size_t)]
+// test: sa_get(NULL, 0)
+START_TEST(test_sa_get__args__NULL__0) {
+    ck_assert_ptr_null(sa_get(NULL, 0));
+} END_TEST
+
+// test: sa_get(sarr, 13)
+START_TEST(test_sa_get__args__sarr__13) {
+    sarrayptr_t sarr = sa_create(0, sizeof(int));
+
+    int element = 1313;
+    ck_assert_int_eq(sa_insert(sarr, &element, 13, 0), AND_OK);
+    void* elmnt = sa_get(sarr, 13);
+    ck_assert_ptr_nonnull(elmnt);
+    ck_assert_int_eq(and_getElement(elmnt, int), element);
+
+    sa_destroy(sarr, AND_FALSE);
+} END_TEST
+
+// test: sa_get(sarr, 13) -- MEM_ALLOCED
+START_TEST(test_sa_get__args__sarr__13__MEM_ALLOCED) {
+    sarrayptr_t sarr = sa_create(0, sizeof(char*));
+
+    char* element = "this data is persistent";
+    ck_assert_int_eq(sa_insert(sarr, element, 13, strlen(element)+1), AND_OK);
+    void* elmnt = sa_get(sarr, 13);
+    ck_assert_ptr_nonnull(elmnt);
+    ck_assert_str_eq(and_getElement(elmnt, char*), element);
+
+    sa_destroy(sarr, AND_TRUE);
+} END_TEST
+
+
+Suite* sa_get_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("Get");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_sa_get__args__NULL__0);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_failure, test_sa_get__args__sarr__13);
+    tcase_add_test(tc_failure, test_sa_get__args__sarr__13__MEM_ALLOCED);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+// ==================================================================================================
+
+
 // ================================================================================================== [sa_destroy(sarrayptr_t, AND_BOOL)]
 // test: sa_destroy(NULL, AND_FALSE)
 START_TEST(test_sa_destroy__args__NULL__AND_FALSE) {
@@ -195,6 +249,7 @@ int main(int argc, char** argv) {
     
     SRunner* suite_runner = srunner_create(sa_create_suite());
     srunner_add_suite(suite_runner, sa_insert_suite());
+    srunner_add_suite(suite_runner, sa_get_suite());
     srunner_add_suite(suite_runner, sa_destroy_suite());
 
     if (argc == 1) {
