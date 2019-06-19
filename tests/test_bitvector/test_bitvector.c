@@ -2023,7 +2023,7 @@ START_TEST(test_bv_toggleBitRange__args__bv__60__72) {
 
 // test: bv_toggleBitRange(bv, 200, 325) -- DYNAMIC
 START_TEST(test_bv_toggleBitRange__args__bv__200__325__DYNAMIC) {
-    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
 
     bv_clearBitRange(bv, 200, 325);
     bv_setBitRange(bv, 198, 201);
