@@ -1676,7 +1676,7 @@ START_TEST(test_bv_setBitRange__args__bv__0__255__DYNAMIC) {
 START_TEST(test_bv_setBitRange__args__bv__0__256__STATIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
 
-    ck_assert_int_eq(bv_setBitRange(bv, 0, 256), AND_FALSE);
+    ck_assert_int_eq(bv_setBitRange(bv, 0, 256), AND_NOK);
     int8_t num_bit_set_In_range_stat = AND_OK;
     bv_numBitsSetInRange(bv, 0, 256, &num_bit_set_In_range_stat);
     ck_assert_int_eq(num_bit_set_In_range_stat, AND_NOK);
@@ -1702,7 +1702,7 @@ START_TEST(test_bv_setBitRange__args__bv__0__256__DYNAMIC) {
 START_TEST(test_bv_setBitRange__args__bv__10__256__STATIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
 
-    ck_assert_int_eq(bv_setBitRange(bv, 10, 256), AND_FALSE);
+    ck_assert_int_eq(bv_setBitRange(bv, 10, 256), AND_NOK);
     int8_t num_bit_set_In_range_stat = AND_OK;
     bv_numBitsSetInRange(bv, 10, 256, &num_bit_set_In_range_stat);
     ck_assert_int_eq(num_bit_set_In_range_stat, AND_NOK);
@@ -1714,7 +1714,7 @@ START_TEST(test_bv_setBitRange__args__bv__10__256__STATIC) {
 START_TEST(test_bv_setBitRange__args__bv__10__256__DYNAMIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
 
-    ck_assert_int_eq(bv_setBitRange(bv, 10, 256), AND_TRUE);
+    ck_assert_int_eq(bv_setBitRange(bv, 10, 256), AND_OK);
     int8_t num_bit_set_In_range_stat = AND_NOK;
     size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 10, 256, &num_bit_set_In_range_stat);
     ck_assert_int_eq(num_bit_set_In_range_stat, AND_OK);
