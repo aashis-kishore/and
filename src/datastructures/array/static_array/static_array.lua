@@ -15,6 +15,14 @@ project "static_array"
         }
 
         symbols "On"
+
+        buildoptions {
+            "--std=c99",
+            "-pedantic",
+            "-Wall",
+            "-Werror",
+            "-g",
+        }
     
     filter "configurations:release"
         defines {
@@ -23,17 +31,17 @@ project "static_array"
 
         optimize "On"
 
+        buildoptions {
+            "--std=c99",
+            "-pedantic",
+            "-Wall",
+            "-Werror"
+        }
+
     filter {}
 
     files {
         "*.c"
-    }
-
-    buildoptions {
-        "--std=c99",
-        "-pedantic",
-        "-Wall",
-        "-Werror"
     }
 
     postbuildcommands {
