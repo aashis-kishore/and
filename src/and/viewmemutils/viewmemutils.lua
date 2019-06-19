@@ -5,25 +5,24 @@ project "viewmemutils"
     targetdir "%{wks.location}/dev_dependencies/%{prj.name}/lib/"
     targetname "viewmemutils"
 
-    filter "configurations:debug"
-        defines {
-            "DEBUG"
-        }
+    defines {
+        "DEBUG"
+    }
 
-        symbols "On"
+    symbols "On"
 
-        buildoptions {
-            "--std=c99",
-            "-Wall",
-            "-Werror",
-            "-g",
-        }
+    buildoptions {
+        "--std=c99",
+        "-Wall",
+        "-Werror",
+        "-g",
+    }
 
-        files {
-            "*.c"
-        }
-    
-        postbuildcommands {
-            "{MKDIR} %{wks.location}/dev_dependencies/%{prj.name}/include",
-            "{COPY} -u viewmemutils.h %{wks.location}/dev_dependencies/%{prj.name}/include" 
-        }
+    files {
+        "*.c"
+    }
+
+    postbuildcommands {
+        "{MKDIR} %{wks.location}/dev_dependencies/%{prj.name}/include",
+        "{COPY} -u viewmemutils.h %{wks.location}/dev_dependencies/%{prj.name}/include" 
+    }
