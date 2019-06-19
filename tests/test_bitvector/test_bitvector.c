@@ -1864,8 +1864,8 @@ START_TEST(test_bv_clearBitRange__args__bv__78__256__STATIC) {
 START_TEST(test_bv_clearBitRange__args__bv__78__256__DYNAMIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
 
-    ck_assert_int_eq(bv_setBitRange(bv, 0, 78), AND_OK);
-    ck_assert_int_eq(bv_setBitRange(bv, 257, 300), AND_OK);
+    ck_assert_int_eq(bv_setBitRange(bv, 0, 80), AND_OK);
+    ck_assert_int_eq(bv_setBitRange(bv, 250, 300), AND_OK);
 
     int8_t clear_bit_range_stat = bv_clearBitRange(bv, 78, 256);
     
@@ -1875,6 +1875,7 @@ START_TEST(test_bv_clearBitRange__args__bv__78__256__DYNAMIC) {
     ck_assert_int_eq(clear_bit_range_stat, AND_OK);
     ck_assert_int_eq(num_bits_clear_in_range_stat, AND_OK);
     ck_assert_int_eq(num_bits_clear_in_range, 256-78+1);
+    ck_assert_int_eq(bv_numBitsSetInRange(bv, 0, 300, NULL), 122);
     ck_assert_int_eq(bv_getVectorSize(bv, NULL), 12);
 
     bv_destroy(bv);
