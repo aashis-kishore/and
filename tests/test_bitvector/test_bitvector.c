@@ -1553,6 +1553,75 @@ Suite* bv_clearBit_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [bv_toggleBit(bitvectorptr_t, size_t)]
+// test: bv_toggleBit(NULL, 122)
+START_TEST(test_bv_toggleBit__args__NULL__12) {
+    ck_assert_int_eq(bv_toggleBit(NULL, 122), AND_NOK);
+} END_TEST
+
+// test: bv_toggleBit(bv, 255)
+START_TEST(test_bv_toggleBit__args__bv__255) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBit(bv, 255);
+    
+    ck_assert_int_eq(bv_toggleBit(bv, 255), AND_OK);
+    ck_assert_int_eq(bv_isBitClear(bv, 255), AND_TRUE);
+
+    ck_assert_int_eq(bv_toggleBit(bv, 255), AND_OK);
+    ck_assert_int_eq(bv_isBitSet(bv, 255), AND_TRUE);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_toggleBit(bv, 267) -- STATIC
+START_TEST(test_bv_toggleBit__args__bv__267__STATIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    ck_assert_int_eq(bv_toggleBit(bv, 267), AND_NOK);
+
+    bv_destroy(bv);
+} END_TEST
+
+// test: bv_toggleBit(bv, 289) -- DYNAMIC
+START_TEST(test_bv_toggleBit__args__bv__289__DYNAMIC) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
+
+    bv_clearBit(bv, 289);
+    
+    ck_assert_int_eq(bv_toggleBit(bv, 289), AND_OK);
+    ck_assert_int_eq(bv_isBitClear(bv, 289), AND_FALSE);
+
+    ck_assert_int_eq(bv_toggleBit(bv, 289), AND_OK);
+    ck_assert_int_eq(bv_isBitSet(bv, 289), AND_FALSE);
+
+    bv_destroy(bv);
+} END_TEST
+
+
+Suite* bv_toggleBit_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("ToggleBit");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_bv_toggleBit__args__NULL__12);
+    tcase_add_test(tc_failure, test_bv_toggleBit__args__bv__267__STATIC);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_bv_toggleBit__args__bv__255);
+    tcase_add_test(tc_success, test_bv_toggleBit__args__bv__289__DYNAMIC);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [bv_setBitRange(bitvectorptr_t, size_t, size_t)]
 // test: bv_setBitRange(NULL, 10, 12)
 START_TEST(test_bv_setBitRange__args__NULL__10__12) {
@@ -1959,6 +2028,7 @@ int main(int argc, char** argv) {
     srunner_add_suite(suite_runner, bv_numBitsClearInRange_suite());
     srunner_add_suite(suite_runner, bv_setBit_suite());
     srunner_add_suite(suite_runner, bv_clearBit_suite());
+    srunner_add_suite(suite_runner, bv_toggleBit_suite());
     srunner_add_suite(suite_runner, bv_setBitRange_suite());
     srunner_add_suite(suite_runner, bv_clearBitRange_suite());
     srunner_add_suite(suite_runner, bv_destroy_suite());
