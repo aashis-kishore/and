@@ -44,6 +44,53 @@ sarrayptr_t sa_create(size_t num_elements, size_t element_size) {
     return sarr;
 }
 
+int8_t sa_insert(sarrayptr_t sarr, void* element, size_t index, size_t element_size) {
+    if (!sarr || !element) {
+        AND_PRINT_ERR("sa_insert", "Invalid address(es) as argument")
+        return AND_NOK;
+    }
+
+    if (index >= sarr->num_elements) {
+        AND_PRINT_ERR("sa_insert", "Index out of bounds")
+        return AND_NOK;
+    }
+
+    if (element_size) {
+        void* element_copy = malloc(element_size);
+
+        if (!element_copy) {
+            AND_PRINT_ERR("sa_insert", "Unable to allocate memory for element")
+            return AND_NOK;
+        }
+        
+        void* memcpy_stat = memcpy(element_copy, element, element_size);
+
+        if (!memcpy_stat) {
+            AND_PRINT_ERR("sa_insert", "Copying of element to persistent location failed")
+            free(element_copy);
+            return AND_NOK;
+        }
+
+        element = &element_copy;
+    }
+
+    void* element_insert_addr = (int8_t*)sarr->buffer + index*sarr->element_size;
+
+    void* memcpy_stat = memcpy(element_insert_addr, element, sarr->element_size);
+
+    if (!memcpy_stat) {
+        AND_PRINT_ERR("sa_insert", "Unable to copy element to static array")
+        return AND_NOK;
+    }
+
+    if (bv_setBit(sarr->bv, index) == AND_NOK) {
+        AND_PRINT_ERR("sa_insert", "Unable to copy element to static array")
+        return AND_NOK;
+    }
+
+    return AND_OK;
+}
+
 int8_t sa_destroy(sarrayptr_t sarr, AND_BOOL has_mem_alloced_element) {
     if (!sarr) {
         AND_PRINT_ERR("sa_destroy", "Invalid array address")
