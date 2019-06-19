@@ -324,6 +324,39 @@ int8_t bv_clearBit(bitvectorptr_t bv, size_t index) {
     return AND_OK;
 }
 
+int8_t bv_toggleBit(bitvectorptr_t bv, size_t index) {
+    if (!bv) {
+        AND_PRINT_ERR("bv_toggleBit", "Invalid address as argument")
+        return AND_NOK;
+    }
+
+    if (!bv->is_dynamic) {
+        if (index >= bv->vector_size*BV_CHUNK_SIZE) {
+            AND_PRINT_ERR("bv_toggleBit", "Index out of bounds")
+            return AND_NOK;
+        }
+    } else {
+        bitvectorptr_t new_bv = bv_resize(bv, index);
+
+        if (!new_bv) {
+            AND_PRINT_ERR("bv_toggleBit", "Vector resizing failed")
+            return AND_NOK;
+        }
+    }
+
+    index = index % (bv->vector_size*BV_CHUNK_SIZE);
+
+    uint32_t mask = 1<<((BV_CHUNK_SIZE-1) - index);
+
+    uint32_t is_bit_set = !!(bv->buffer[index/BV_CHUNK_SIZE] & mask);
+    if (!is_bit_set)
+        bv->num_bits_set++;
+
+    bv->buffer[index/BV_CHUNK_SIZE] ^= mask;
+
+    return AND_OK;  
+}
+
 int8_t bv_setBitRange(bitvectorptr_t bv, size_t lindex, size_t uindex) {
     if (!bv) {
         AND_PRINT_ERR("bv_setBitRange", "Invalid address as argument")
