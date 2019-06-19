@@ -2031,6 +2031,8 @@ START_TEST(test_bv_toggleBitRange__args__bv__200__325__DYNAMIC) {
 
     ck_assert_int_eq(bv_toggleBitRange(bv, 200, 325), AND_OK);
     ck_assert_int_eq(bv_numBitsSetInRange(bv, 200, 325, NULL), 118);
+    ck_assert_int_eq(bv_toggleBitRange(bv, 200, 325), AND_OK);
+    ck_assert_int_eq(bv_numBitsSetInRange(bv, 200, 325, NULL), 8);
     ck_assert_int_eq(bv_getVectorSize(bv, NULL), 12);
 
     bv_destroy(bv);
