@@ -91,6 +91,22 @@ int8_t sa_insert(sarrayptr_t sarr, void* element, size_t index, size_t element_s
     return AND_OK;
 }
 
+void* sa_get(sarrayptr_t sarr, size_t index) {
+    if (!sarr) {
+        AND_PRINT_ERR("sa_get", "Invalid address as argument")
+        return AND_PNOK;
+    }
+
+    if (index >= sarr->num_elements) {
+        AND_PRINT_ERR("sa_get", "Index out of bounds")
+        return AND_PNOK;
+    }
+
+    void* element = (int8_t*)sarr->buffer + index*sarr->element_size;
+
+    return element;
+}
+
 int8_t sa_destroy(sarrayptr_t sarr, AND_BOOL has_mem_alloced_element) {
     if (!sarr) {
         AND_PRINT_ERR("sa_destroy", "Invalid array address")
