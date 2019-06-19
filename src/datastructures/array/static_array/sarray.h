@@ -2,6 +2,7 @@
 #define _SARRAY_H
 
 #include "and.h"
+#include "bitvector.h"
 
 typedef struct sarray* sarrayptr_t;
 
