@@ -56,7 +56,85 @@ Suite* sa_create_suite(void) {
 // ==================================================================================================
 
 
-// ========================================================================================= [sa_destroy(sarrayptr_t, AND_BOOL)]
+// ================================================================================================== [sa_insert(sarrayptr_t, void*, size_t, size_t)]
+// test: sa_insert(NULL, NULL, 0, 0)
+START_TEST(test_sa_insert__args__NULL__NULL__0__0) {
+    ck_assert_int_eq(sa_insert(NULL, NULL, 0, 0), AND_NOK);
+} END_TEST
+
+// test: sa_insert(NULL, element, 0, 0)
+START_TEST(test_sa_insert__args__NULL__element__0__0) {
+    int element = 101;
+    ck_assert_int_eq(sa_insert(NULL, &element, 0, 0), AND_NOK);
+} END_TEST
+
+// test: sa_insert(sarr, NULL, 0, 0)
+START_TEST(test_sa_insert__args__sarr__NULL__0__0) {
+    sarrayptr_t sarr = sa_create(0, sizeof(int));
+
+    ck_assert_int_eq(sa_insert(sarr, NULL, 0, 0), AND_NOK);
+
+    sa_destroy(sarr, AND_FALSE);
+} END_TEST
+
+// test: sa_insert(sarr, element, gmax_index, 0)
+START_TEST(test_sa_insert__args__sarr__element__gmax_index__0) {
+    sarrayptr_t sarr = sa_create(SA_DEFAULT_SIZE, sizeof(int));
+
+    int element = 102;
+    size_t gmax_index = SA_DEFAULT_SIZE;
+    ck_assert_int_eq(sa_insert(sarr, &element, gmax_index, 0), AND_NOK);
+
+    sa_destroy(sarr, AND_FALSE);
+} END_TEST
+
+// test: sa_insert(sarr, element, 24, 0)
+START_TEST(test_sa_insert__args__sarr__element__24__0) {
+    sarrayptr_t sarr = sa_create(0, sizeof(int));
+
+    int element = 123;
+    ck_assert_int_eq(sa_insert(sarr, &element, 24, 0), AND_OK);
+
+    sa_destroy(sarr, AND_FALSE);
+} END_TEST
+
+// test: sa_insert(sarr, str_element, 12, sizeof(str_element))
+START_TEST(test_sa_insert__args__sarr__str_element__12__sizeof_str_element) {
+    sarrayptr_t sarr = sa_create(0, sizeof(char*));
+
+    char* element = "this string should be saved";
+    ck_assert_int_eq(sa_insert(sarr, element, 12, strlen(element)+1), AND_OK);
+
+    sa_destroy(sarr, AND_TRUE);
+} END_TEST
+
+
+Suite* sa_insert_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("Insert");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_sa_insert__args__NULL__NULL__0__0);
+    tcase_add_test(tc_failure, test_sa_insert__args__NULL__element__0__0);
+    tcase_add_test(tc_failure, test_sa_insert__args__sarr__NULL__0__0);
+    tcase_add_test(tc_failure, test_sa_insert__args__sarr__element__gmax_index__0);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_sa_insert__args__sarr__element__24__0);
+    tcase_add_test(tc_success, test_sa_insert__args__sarr__str_element__12__sizeof_str_element);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
+// ================================================================================================== [sa_destroy(sarrayptr_t, AND_BOOL)]
 // test: sa_destroy(NULL, AND_FALSE)
 START_TEST(test_sa_destroy__args__NULL__AND_FALSE) {
     int8_t destroy_stat = sa_destroy(NULL, AND_FALSE);
@@ -109,13 +187,14 @@ Suite* sa_destroy_suite(void) {
     return suite;
 }
 
-// =========================================================================================
+// ==================================================================================================
 
 
 int main(int argc, char** argv) {
     int num_tests_failed;
     
     SRunner* suite_runner = srunner_create(sa_create_suite());
+    srunner_add_suite(suite_runner, sa_insert_suite());
     srunner_add_suite(suite_runner, sa_destroy_suite());
 
     if (argc == 1) {
