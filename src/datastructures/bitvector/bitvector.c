@@ -214,26 +214,46 @@ size_t bv_numBitsClearInRange(bitvectorptr_t bv, size_t lindex, size_t uindex, i
     return num_bits_clear_in_range;
 }
 
-static bitvectorptr_t _resize(bitvectorptr_t bv, size_t new_vector_size) {
-    void* new_buffer = calloc(new_vector_size, sizeof(uint32_t));
+static bitvectorptr_t bv_resize(bitvectorptr_t bv, size_t index) {
+    size_t new_vector_size = bv->vector_size;
 
-    if (!new_buffer) {
-        AND_PRINT_ERR("_resize", "Unable to resize bitvector")
-        return AND_PNOK;
-    }
+    if (index >= bv->vector_size*BV_CHUNK_SIZE) {
+        if (!bv->is_dynamic) {
+            AND_PRINT_ERR("bv_resize", "Index out of bounds")
+            return AND_PNOK;
+        }
 
-    void* memcpy_stat = memcpy(new_buffer, bv->buffer, bv->vector_size*sizeof(uint32_t));
+        size_t prospective_last_index;
 
-    if (!memcpy_stat) {
-        AND_PRINT_ERR("_resize", "Unable to copy contents of bitvector")
-        return AND_PNOK;
-    }
+        do {
+            prospective_last_index = new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100-1;
+            new_vector_size = ceil((new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
+        } while(index > prospective_last_index);
+
+    } else if (bv->num_bits_set > bv->max_size_before_resize)
+        new_vector_size = ceil((bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
+
+    if (bv->vector_size < new_vector_size) {
+        void* new_buffer = calloc(new_vector_size, sizeof(uint32_t));
+
+        if (!new_buffer) {
+            AND_PRINT_ERR("bv_resize", "Unable to resize bitvector")
+            return AND_PNOK;
+        }
+
+        void* memcpy_stat = memcpy(new_buffer, bv->buffer, bv->vector_size*sizeof(uint32_t));
+
+        if (!memcpy_stat) {
+            AND_PRINT_ERR("bv_resize", "Unable to copy contents of bitvector")
+            return AND_PNOK;
+        }
     
-    free(bv->buffer);
+        free(bv->buffer);
 
-    bv->buffer = new_buffer;
-    bv->vector_size = new_vector_size;
-    bv->max_size_before_resize = (bv->vector_size*BV_CHUNK_SIZE)*((float)bv->load_factor/100);
+        bv->buffer = new_buffer;
+        bv->vector_size = new_vector_size;
+        bv->max_size_before_resize = (bv->vector_size*BV_CHUNK_SIZE)*((float)bv->load_factor/100);
+    }
 
     return bv;
 }
@@ -245,35 +265,16 @@ int8_t bv_setBit(bitvectorptr_t bv, size_t index) {
     }
 
     if (!bv->is_dynamic) {
-        size_t max_index = bv->vector_size*BV_CHUNK_SIZE - 1;
-
-        if (index > max_index) {
+        if (index >= bv->vector_size*BV_CHUNK_SIZE) {
             AND_PRINT_ERR("bv_setBit", "Index out of bounds")
             return AND_NOK;
         }
-    }
+    } else {
+        bitvectorptr_t new_bv = bv_resize(bv, index);
 
-    if (bv->is_dynamic) {
-        size_t new_vector_size = bv->vector_size;
-
-        if (index > bv->vector_size*BV_CHUNK_SIZE-1) {
-            size_t prospective_last_index;
-
-            do {
-                prospective_last_index = new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100-1;
-                new_vector_size = ceil((new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
-            } while(index > prospective_last_index);
-
-        } else if (bv->num_bits_set > bv->max_size_before_resize)
-            new_vector_size = ceil((bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
-
-        if (bv->vector_size < new_vector_size) {
-            bitvectorptr_t new_bv = _resize(bv, new_vector_size);
-            
-            if (!new_bv) {
-                AND_PRINT_ERR("bv_setBit", "Vector resizing failed")
-                return AND_NOK;
-            }
+        if (!new_bv) {
+            AND_PRINT_ERR("bv_setBit", "Vector resizing failed")
+            return AND_NOK;
         }
     }
 
@@ -297,29 +298,16 @@ int8_t bv_clearBit(bitvectorptr_t bv, size_t index) {
     }
 
     if (!bv->is_dynamic) {
-        size_t max_index = bv->vector_size*BV_CHUNK_SIZE - 1;
-
-        if (index > max_index) {
+        if (index >= bv->vector_size*BV_CHUNK_SIZE) {
             AND_PRINT_ERR("bv_clearBit", "Index out of bounds")
             return AND_NOK;
         }
-    }
+    } else {
+        bitvectorptr_t new_bv = bv_resize(bv, index);
 
-    if (bv->is_dynamic) {
-        if (index > bv->vector_size*BV_CHUNK_SIZE-1) {
-            size_t new_vector_size = bv->vector_size, prospective_last_index;
-
-            do {
-                prospective_last_index = new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100-1;
-                new_vector_size = ceil((new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
-            } while(index > prospective_last_index);
-
-            bitvectorptr_t new_bv = _resize(bv, new_vector_size);
-            
-            if (!new_bv) {
-                AND_PRINT_ERR("bv_clearBit", "Vector resizing failed")
-                return AND_NOK;
-            }
+        if (!new_bv) {
+            AND_PRINT_ERR("bv_clearBit", "Vector resizing failed")
+            return AND_NOK;
         }
     }
 
@@ -347,33 +335,20 @@ int8_t bv_setBitRange(bitvectorptr_t bv, size_t lindex, size_t uindex) {
         return AND_NOK;
     }
 
-    size_t new_vector_size = bv->vector_size;
-
-    if (uindex >= bv->vector_size*BV_CHUNK_SIZE) {
-        if (!bv->is_dynamic) {
+    if (!bv->is_dynamic) {
+        if (uindex >= bv->vector_size*BV_CHUNK_SIZE) {
             AND_PRINT_ERR("bv_setBitRange", "Index out of bounds")
             return AND_NOK;
         }
+    } else {
+        bitvectorptr_t new_bv = bv_resize(bv, uindex);
 
-        size_t prospective_last_uindex;
-
-        do {
-            prospective_last_uindex = new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100-1;
-            new_vector_size = ceil((new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
-        } while(uindex > prospective_last_uindex);
-
-    } else if (bv->num_bits_set > bv->max_size_before_resize)
-        new_vector_size = ceil((bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
-
-    if (bv->vector_size < new_vector_size) {
-        bitvectorptr_t new_bv = _resize(bv, new_vector_size);
-            
         if (!new_bv) {
-            AND_PRINT_ERR("bv_setBit", "Vector resizing failed")
+            AND_PRINT_ERR("bv_setBitRange", "Vector resizing failed")
             return AND_NOK;
         }
     }
-
+    
     size_t chunk_lindex = floor((float)lindex/BV_CHUNK_SIZE), chunk_uindex = floor((float)uindex/BV_CHUNK_SIZE);
     size_t shift_factor;
     uint32_t mask;
