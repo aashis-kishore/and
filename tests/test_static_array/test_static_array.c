@@ -71,7 +71,7 @@ START_TEST(test_sa_destroy__args__NULL__AND_TRUE) {
    
 // test: sa_destroy(sarr, AND_FALSE)
 START_TEST(test_sa_destroy__args__sarr__AND_FALSE) {
-    sarrayptr_t sarr = ss_create(0, sizeof(int));
+    sarrayptr_t sarr = sa_create(0, sizeof(int));
 
     int8_t destroy_stat = sa_destroy(sarr, AND_FALSE);
     ck_assert_int_eq(destroy_stat, AND_OK);
@@ -79,7 +79,7 @@ START_TEST(test_sa_destroy__args__sarr__AND_FALSE) {
 
 // test: sa_destroy(sarr, AND_TRUE)
 START_TEST(test_sa_destroy__args__sarr__AND_TRUE) {
-    sarrayptr_t sarr = ss_create(0, sizeof(char*));
+    sarrayptr_t sarr = sa_create(0, sizeof(char*));
 
     char elmnt[] = "test string two";
     sa_insert(sarr, elmnt, 2, strlen(elmnt)+1);
