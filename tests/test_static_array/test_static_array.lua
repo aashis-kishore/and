@@ -24,7 +24,8 @@ project "test_static_array"
 
     links {
         "check", "m", "rt",
-        "static_array"
+        "static_array",
+        "bitvector",
     }
 
     files {
