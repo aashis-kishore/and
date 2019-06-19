@@ -337,9 +337,69 @@ int8_t bv_clearBit(bitvectorptr_t bv, size_t index) {
 }
 
 int8_t bv_setBitRange(bitvectorptr_t bv, size_t lindex, size_t uindex) {
-    // TODO
+    if (!bv) {
+        AND_PRINT_ERR("bv_setBitRange", "Invalid address as argument")
+        return AND_NOK;
+    }
 
-    return AND_NOK;
+    if (lindex >= uindex) {
+        AND_PRINT_ERR("bv_setBitRange", "Index values not allowed")
+        return AND_NOK;
+    }
+
+    size_t new_vector_size = bv->vector_size;
+
+    if (uindex >= bv->vector_size*BV_CHUNK_SIZE) {
+        if (!bv->is_dynamic) {
+            AND_PRINT_ERR("bv_setBitRange", "Index out of bounds")
+            return AND_NOK;
+        }
+
+        size_t prospective_last_uindex;
+
+        do {
+            prospective_last_uindex = new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100-1;
+            new_vector_size = ceil((new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
+        } while(uindex > prospective_last_uindex);
+
+    } else if (bv->num_bits_set > bv->max_size_before_resize)
+        new_vector_size = ceil((bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
+
+    if (bv->vector_size < new_vector_size) {
+        bitvectorptr_t new_bv = _resize(bv, new_vector_size);
+            
+        if (!new_bv) {
+            AND_PRINT_ERR("bv_setBit", "Vector resizing failed")
+            return AND_NOK;
+        }
+    }
+
+    size_t chunk_lindex = floor((float)lindex/BV_CHUNK_SIZE), chunk_uindex = floor((float)uindex/BV_CHUNK_SIZE);
+    size_t shift_factor;
+    uint32_t mask;
+
+    for (size_t index = chunk_lindex; index <= chunk_uindex; index++) {
+        if (index == chunk_lindex && (lindex % BV_CHUNK_SIZE) != 0) {
+            shift_factor = (index+1)*BV_CHUNK_SIZE - lindex;
+            mask = (1<<shift_factor) - 1;
+
+            if (chunk_lindex == chunk_uindex) {
+                shift_factor = (index+1)*BV_CHUNK_SIZE - uindex - 1;
+                uint32_t mask2 = (1<<shift_factor) - 1;
+                mask &= ~mask2;
+            }
+
+            bv->buffer[index] |= mask;
+        } else if (index == chunk_uindex) {
+            shift_factor = (index+1)*BV_CHUNK_SIZE - uindex - 1;
+            mask = (1<<shift_factor) - 1;
+            bv->buffer[index] |= ~mask;
+        } else {
+            bv->buffer[index] |= ~0;
+        }
+    }    
+
+    return AND_OK;
 }
 
 int8_t bv_clearBitRange(bitvectorptr_t bv, size_t lindex, size_t uindex) {
