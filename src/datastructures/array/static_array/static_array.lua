@@ -7,6 +7,15 @@ project "static_array"
 
     includedirs {
         "%{wks.location}/src/and/",
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/bitvector/include/",
+    }
+
+    libdirs {
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/bitvector/lib/",
+    }
+
+    links {
+        "bitvector"
     }
 
     filter "configurations:debug"
