@@ -230,7 +230,7 @@ static bitvectorptr_t bv_resize(bitvectorptr_t bv, size_t index) {
             new_vector_size = ceil((new_vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
         } while(index > prospective_last_index);
 
-    } else if (bv->num_bits_set > bv->max_size_before_resize)
+    } else if (bv->num_bits_set >= bv->max_size_before_resize)
         new_vector_size = ceil((bv->vector_size*BV_CHUNK_SIZE*(float)bv->growth_factor/100)/BV_CHUNK_SIZE);
 
     if (bv->vector_size < new_vector_size) {
