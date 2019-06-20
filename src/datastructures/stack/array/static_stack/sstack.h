@@ -2,6 +2,7 @@
 #define _SSTACK_H
 
 #include "and.h"
+#include "sarray.h"
 
 typedef struct sstack* sstackptr_t;
 

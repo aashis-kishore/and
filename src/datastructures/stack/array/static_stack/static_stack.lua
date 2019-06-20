@@ -6,7 +6,19 @@ project "static_stack"
     targetname "sstack"
 
     includedirs {
-        "%{wks.location}/src/and/"
+        "%{wks.location}/src/and/",
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/bitvector/include/",
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/static_array/include/",
+    }
+
+    libdirs {
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/bitvector/lib/",
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/static_array/lib/",
+    }
+
+    links {
+        "bitvector",
+        "static_array",
     }
 
     filter "configurations:debug"
@@ -16,6 +28,14 @@ project "static_stack"
 
         symbols "On"
 
+        buildoptions {
+            "--std=c99",
+            "-pedantic",
+            "-Wall",
+            "-Werror",
+            "-g",
+        }
+
     filter "configurations:release"
         defines {
             "NDEBUG"
@@ -23,17 +43,16 @@ project "static_stack"
 
         optimize "On"
 
-    filter {}
-        files {
-            "*.c"
-        }
-
         buildoptions {
             "--std=c99",
             "-pedantic",
             "-Wall",
             "-Werror",
-            -- "-fsanitize=address"
+        }
+
+    filter {}
+        files {
+            "*.c"
         }
 
 postbuildcommands {

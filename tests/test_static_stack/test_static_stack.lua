@@ -12,18 +12,24 @@ project "test_static_stack"
 
     includedirs {
         "%{wks.location}/dev_dependencies/check/include",
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/bitvector/include",
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/static_array/include",
         "%{wks.location}/build/%{cfg.buildcfg}/lib/static_stack/include",
-        "%{wks.location}/src/and/"
+        "%{wks.location}/src/and/",
     }
 
     libdirs {
         "%{wks.location}/dev_dependencies/check/lib",
-        "%{wks.location}/build/%{cfg.buildcfg}/lib/static_stack/lib"
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/bitvector/lib",
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/static_array/lib",
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/static_stack/lib",
     }
 
     links {
         "check", "m", "rt",
-        "static_stack"
+        "bitvector",
+        "static_array",
+        "static_stack",
     }
 
     files {
