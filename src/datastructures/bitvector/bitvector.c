@@ -13,7 +13,7 @@ typedef struct bitvector {
 
 
 bitvectorptr_t bv_create(size_t vector_size, uint8_t growth_factor, uint8_t load_factor, AND_BOOL is_dynamic) {
-    vector_size = (vector_size == 0) ? BV_DEFAULT_VECTOR_SIZE : vector_size;
+    vector_size = (vector_size == 0 || vector_size < BV_DEFAULT_VECTOR_SIZE) ? BV_DEFAULT_VECTOR_SIZE : vector_size;
     growth_factor = (growth_factor == 0) ? BV_DEFAULT_GROWTH_FACTOR : growth_factor;
     load_factor = (load_factor == 0) ? BV_DEFAULT_LOAD_FACTOR : load_factor;
 
