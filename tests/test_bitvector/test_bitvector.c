@@ -1588,12 +1588,16 @@ START_TEST(test_bv_toggleBit__args__bv__289__DYNAMIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
 
     bv_clearBit(bv, 289);
+
+    size_t num_bits_set = bv_getNumBitsSet(bv, NULL);
     
     ck_assert_int_eq(bv_toggleBit(bv, 289), AND_OK);
     ck_assert_int_eq(bv_isBitClear(bv, 289), AND_FALSE);
+    ck_assert_int_eq(bv_getNumBitsSet(bv, NULL), num_bits_set+1);
 
     ck_assert_int_eq(bv_toggleBit(bv, 289), AND_OK);
     ck_assert_int_eq(bv_isBitSet(bv, 289), AND_FALSE);
+    ck_assert_int_eq(bv_getNumBitsSet(bv, NULL), num_bits_set);
 
     bv_destroy(bv);
 } END_TEST
