@@ -60,6 +60,22 @@ size_t sa_getMaxNumElements(sarrayptr_t sarr, int8_t* status) {
     return sarr->max_num_elements;
 }
 
+size_t sa_getElementSize(sarrayptr_t sarr, int8_t* status) {
+    if (!sarr) {
+        AND_PRINT_ERR("sa_getElementSize", "Invalid address as argument")
+
+        if (status)
+            *status = AND_NOK;
+
+        return AND_ZERO;
+    }
+
+    if (status)
+        *status = AND_OK;
+    
+    return sarr->element_size;
+}
+
 int8_t sa_insert(sarrayptr_t sarr, void* element, size_t index, size_t element_size) {
     if (!sarr || !element) {
         AND_PRINT_ERR("sa_insert", "Invalid address(es) as argument")
