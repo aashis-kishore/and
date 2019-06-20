@@ -80,6 +80,29 @@ size_t bv_getNumBitsSet(bitvectorptr_t bv, int8_t* status) {
     return bv->num_bits_set;
 }
 
+uint32_t* bv_getBuffer(bitvectorptr_t bv) {
+    if (!bv) {
+        AND_PRINT_ERR("bv_getBuffer", "Invalid address as argument")
+        return AND_PNOK;
+    }
+
+    uint32_t* buffer_clone = malloc(bv->vector_size*sizeof(uint32_t));
+
+    if (!buffer_clone) {
+        AND_PRINT_ERR("bv_getBuffer", "Unable to allocate memory for buffer-clone")
+        return AND_PNOK;
+    }
+
+    uint32_t* memcpy_stat = memcpy(buffer_clone, bv->buffer, bv->vector_size*sizeof(uint32_t));
+
+    if (!memcpy_stat) {
+        AND_PRINT_ERR("bv_getBuffer", "Unable to clone buffer")
+        return AND_PNOK;
+    }
+
+    return buffer_clone;
+}
+
 int8_t bv_isBitSet(bitvectorptr_t bv, size_t index) {
     if (!bv) {
         AND_PRINT_ERR("bv_isBitSet", "Invalid address as argument")
