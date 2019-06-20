@@ -406,7 +406,9 @@ int8_t bv_setBitRange(bitvectorptr_t bv, size_t lindex, size_t uindex) {
         }
     }
 
-    bv->num_bits_set += (uindex-lindex+1);    
+    size_t total_num_bits_set = bv_numBitsSetInRange(bv, 0, bv->vector_size*BV_CHUNK_SIZE-1, NULL);
+
+    bv->num_bits_set = total_num_bits_set;    
 
     return AND_OK;
 }
