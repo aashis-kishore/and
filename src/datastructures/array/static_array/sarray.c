@@ -123,6 +123,29 @@ int8_t sa_insert(sarrayptr_t sarr, void* element, size_t index, size_t element_s
     return AND_OK;
 }
 
+void* sa_delete(sarrayptr_t sarr, size_t index) {
+    if (!sarr) {
+        AND_PRINT_ERR("sa_delete", "Invalid address as argument")
+        return AND_PNOK;
+    }
+
+    if (index >= sarr->max_num_elements) {
+        AND_PRINT_ERR("sa_delete", "Index out of bounds")
+        return AND_PNOK;
+    }
+
+    int8_t is_bit_clear_stat = bv_isBitClear(sarr->bv, index);
+
+    if (bv_clearBit(sarr->bv, index) == AND_NOK) {
+        AND_PRINT_ERR("sa_delete", "Unable to clear corresponding bit")
+        return AND_PNOK;
+    }
+
+    void* element = (is_bit_clear_stat != AND_NOK && is_bit_clear_stat == AND_TRUE) ? AND_PNOK : (int8_t*)sarr->buffer + index*sarr->element_size;
+
+    return element;
+}
+
 void* sa_get(sarrayptr_t sarr, size_t index) {
     if (!sarr) {
         AND_PRINT_ERR("sa_get", "Invalid address as argument")
