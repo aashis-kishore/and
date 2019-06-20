@@ -164,6 +164,53 @@ void* sa_get(sarrayptr_t sarr, size_t index) {
     return element;
 }
 
+void* sa_swap(sarrayptr_t sarr, size_t index_x, size_t index_y) {
+    if (!sarr) {
+        AND_PRINT_ERR("sa_swap", "Invalid address as argument")
+        return AND_PNOK;
+    }
+
+    if (index_x == index_y) {
+        return (int8_t*)sarr->buffer + index_x*sarr->element_size;
+    }
+
+    void* tmp_elmnt_store = malloc(sarr->element_size);
+
+    if (!tmp_elmnt_store) {
+        AND_PRINT_ERR("sa_swap", "Unable to allocate memory for temporary storage")
+        return AND_PNOK;
+    }
+
+    void* index_x_addr = (int8_t*)sarr->buffer + index_x*sarr->element_size;
+    void* index_y_addr = (int8_t*)sarr->buffer + index_y*sarr->element_size;
+
+    void* tmp_memcpy_stat = memcpy(tmp_elmnt_store, index_x_addr, sarr->element_size);
+
+    if (!tmp_memcpy_stat) {
+        AND_PRINT_ERR("sa_swap", "Unable to copy element to temporary location");
+        return AND_PNOK;
+    }
+
+    void* top_memcpy_stat = memcpy(index_x_addr, index_y_addr, sarr->element_size);
+
+    if (!top_memcpy_stat) {
+        AND_PRINT_ERR("sa_swap", "Unable to copy element to top location");
+        return AND_PNOK;
+    }
+
+    void* index_y_memcpy_stat = memcpy(index_y_addr, tmp_elmnt_store, sarr->element_size);
+
+    if (!index_y_memcpy_stat) {
+        AND_PRINT_ERR("sa_swap", "Unable to copy element to prev-top location");
+        return AND_PNOK;
+    }
+
+    free(tmp_elmnt_store);
+
+    return index_y_addr;
+
+}
+
 int8_t sa_destroy(sarrayptr_t sarr, AND_BOOL has_mem_alloced_element) {
     if (!sarr) {
         AND_PRINT_ERR("sa_destroy", "Invalid array address")
