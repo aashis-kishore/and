@@ -151,9 +151,9 @@ START_TEST(test_ss_isEmpty__args__full_then_empty_sstk) {
     for (int i=1; i<=3; i++)
         ss_push(full_then_empty_sstk, &i, 0);
 
-    ss_pop(full_then_empty_sstk, AND_FALSE);
-    ss_pop(full_then_empty_sstk, AND_FALSE);
-    ss_pop(full_then_empty_sstk, AND_FALSE);
+    ss_pop(full_then_empty_sstk);
+    ss_pop(full_then_empty_sstk);
+    ss_pop(full_then_empty_sstk);
 
     int8_t is_empty_stat = ss_isEmpty(full_then_empty_sstk);
 
@@ -288,38 +288,32 @@ Suite* ss_push_suite(void) {
 
 
 // ========================================================================================= [ss_pop(sstackptr_t, AND_BOOL)]
-// test: ss_pop(NULL, AND_FALSE)
-START_TEST(test_ss_pop__args__NULL__AND_FALSE) {
-    void* pop_stat = ss_pop(NULL, AND_FALSE);
-    ck_assert_ptr_null(pop_stat);
-} END_TEST
-// test: ss_pop(NULL, AND_TRUE)
-START_TEST(test_ss_pop__args__NULL__AND_TRUE) {
-    void* pop_stat = ss_pop(NULL, AND_TRUE);
-
+// test: ss_pop(NULL)
+START_TEST(test_ss_pop__args__NULL) {
+    void* pop_stat = ss_pop(NULL);
     ck_assert_ptr_null(pop_stat);
 } END_TEST
 
-// test: ss_pop(sstk, AND_FALSE)
-START_TEST(test_ss_pop__args__sstk__AND_FALSE) {
+// test: ss_pop(sstk)
+START_TEST(test_ss_pop__args__sstk) {
     sstackptr_t sstk = ss_create(SS_DEFAULT_SIZE, sizeof(int));
     int elmnt = 12;
     ss_push(sstk, &elmnt, 0);
 
-    void* popped_elmnt = ss_pop(sstk, AND_FALSE);
+    void* popped_elmnt = ss_pop(sstk);
 
     ck_assert_ptr_nonnull(popped_elmnt);
     ck_assert_int_eq(and_getElement(popped_elmnt, int), 12);
     ss_destroy(sstk, AND_FALSE);
 } END_TEST
 
-// test: ss_pop(sstk, AND_TRUE)
-START_TEST(test_ss_pop__args__sstk__AND_TRUE) {
+// test: ss_pop(sstk) -- MEM ALLOCED
+START_TEST(test_ss_pop__args__sstk__MEM_ALLOCED) {
     sstackptr_t sstk = ss_create(SS_DEFAULT_SIZE, sizeof(char*));
     char elmnt[] = "test string";
     ss_push(sstk, elmnt, strlen(elmnt)+1);
 
-    void* popped_elmnt = ss_pop(sstk, AND_TRUE);
+    void* popped_elmnt = ss_pop(sstk);
 
     ck_assert_ptr_nonnull(popped_elmnt);
     ck_assert_str_eq(and_getElement(popped_elmnt, char*), elmnt);
@@ -334,12 +328,11 @@ Suite* ss_pop_suite(void) {
     suite = suite_create("Pop");
 
     tc_failure = tcase_create("Failure");
-    tcase_add_test(tc_failure, test_ss_pop__args__NULL__AND_FALSE);
-    tcase_add_test(tc_failure, test_ss_pop__args__NULL__AND_TRUE);
+    tcase_add_test(tc_failure, test_ss_pop__args__NULL);
 
     tc_success = tcase_create("Success");
-    tcase_add_test(tc_success, test_ss_pop__args__sstk__AND_FALSE);
-    tcase_add_test(tc_success, test_ss_pop__args__sstk__AND_TRUE);
+    tcase_add_test(tc_success, test_ss_pop__args__sstk);
+    tcase_add_test(tc_success, test_ss_pop__args__sstk__MEM_ALLOCED);
 
     suite_add_tcase(suite, tc_failure);
     suite_add_tcase(suite, tc_success);

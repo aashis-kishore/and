@@ -2,39 +2,40 @@
 
 
 typedef struct sstack {
-    void* buffer;
+    sarrayptr_t buffer;
     size_t top;
-    size_t num_elmnts;
-    size_t elmnt_size;
+    size_t num_elements;
+    size_t element_size;
     AND_BOOL empty;
 } sstack_t;
 
 
-sstackptr_t ss_create(size_t num_elmnts, size_t elmnt_size) {
-    if (!elmnt_size) {
+sstackptr_t ss_create(size_t num_elements, size_t element_size) {
+    if (!element_size) {
         AND_PRINT_ERR("ss_create", "Invalid element size")
         return AND_PNOK;
     }
 
-    num_elmnts = num_elmnts ? num_elmnts : SS_DEFAULT_SIZE;
+    num_elements = num_elements ? num_elements : SS_DEFAULT_SIZE;
 
     sstackptr_t sstk = malloc(sizeof(sstack_t));
 
     if (!sstk) {
-        AND_PRINT_ERR("ss_create", "Memory allocation for stack failed")
+        AND_PRINT_ERR("ss_create", "Unable to allocate memory for 'stack'")
         return AND_PNOK;
     }
 
-    sstk->buffer = malloc(num_elmnts*elmnt_size);
+    sstk->buffer = sa_create(num_elements, element_size);
 
     if (!sstk->buffer) {
-        AND_PRINT_ERR("ss_create", "Memory allocation for stack buffer failed")
+        AND_PRINT_ERR("ss_create", "Unable to allocate memory for 'stack-buffer'")
+        free(sstk);
         return AND_PNOK;
     }
 
     sstk->top = 0;
-    sstk->num_elmnts = num_elmnts;
-    sstk->elmnt_size = elmnt_size;
+    sstk->num_elements = num_elements;
+    sstk->element_size = element_size;
     sstk->empty = AND_TRUE;
 
     return sstk;
@@ -55,11 +56,11 @@ int8_t ss_isFull(sstackptr_t sstk) {
         return AND_NOK;
     }
 
-    return (sstk->top == sstk->num_elmnts-1) ? AND_TRUE : AND_FALSE;
+    return (sstk->top == sstk->num_elements-1) ? AND_TRUE : AND_FALSE;
 }
 
-int8_t ss_push(sstackptr_t sstk, void* elmnt, size_t elmnt_size) {
-    if (!sstk || !elmnt) {
+int8_t ss_push(sstackptr_t sstk, void* element, size_t element_size) {
+    if (!sstk || !element) {
         AND_PRINT_ERR("ss_push", "Invalid address as argument")
         return AND_NOK;
     }
@@ -74,38 +75,17 @@ int8_t ss_push(sstackptr_t sstk, void* elmnt, size_t elmnt_size) {
     else
         sstk->empty = AND_FALSE;
         
+    int8_t insert_stat = sa_insert(sstk->buffer, element, sstk->top, element_size);
 
-    if (elmnt_size) {
-        void* elmnt_cpy = malloc(elmnt_size);
-
-        if (!elmnt_cpy) {
-            AND_PRINT_ERR("ss_push", "Memory allocation for element copy failed")
-            return AND_NOK;
-        }
-        
-        void* memcpy_stat = memcpy(elmnt_cpy, elmnt, elmnt_size);
-
-        if (!memcpy_stat) {
-            AND_PRINT_ERR("ss_push", "Copying of element to permanent location failed")
-            return AND_NOK;
-        }
-
-        elmnt = &elmnt_cpy;
-    }
-
-    void* elmnt_insrt_addr = (int8_t*)sstk->buffer + sstk->top*sstk->elmnt_size;
-
-    void* memcpy_stat = memcpy(elmnt_insrt_addr, elmnt, sstk->elmnt_size);
-
-    if (!memcpy_stat) {
-        AND_PRINT_ERR("ss_push", "Unable to copy element to stack")
+    if (insert_stat == AND_NOK) {
+        AND_PRINT_ERR("ss_push", "Unable to perform push")
         return AND_NOK;
     }
 
     return AND_OK;
 }
 
-void* ss_pop(sstackptr_t sstk, AND_BOOL mem_allocd_elmnt) {
+void* ss_pop(sstackptr_t sstk) {
     if (!sstk) {
         AND_PRINT_ERR("ss_pop", "Invalid address as argument")
         return AND_PNOK;
@@ -116,17 +96,17 @@ void* ss_pop(sstackptr_t sstk, AND_BOOL mem_allocd_elmnt) {
         return AND_PNOK;
     }
 
-    void* elmnt = (int8_t*)sstk->buffer + sstk->top*sstk->elmnt_size;
+    void* element_addr = sa_delete(sstk->buffer, sstk->top);
 
     if (sstk->top != 0)
         sstk->top--;
     else
         sstk->empty = AND_TRUE;
 
-    return elmnt;
+    return element_addr;
 }
 
-void* ss_peek(sstackptr_t sstk, size_t rev_index) {
+void* ss_peek(sstackptr_t sstk, size_t index) {
     if (!sstk) {
         AND_PRINT_ERR("ss_peek", "Invalid address as argument")
         return AND_PNOK; 
@@ -137,48 +117,10 @@ void* ss_peek(sstackptr_t sstk, size_t rev_index) {
         return AND_PNOK;
     }
 
-    rev_index = rev_index % (sstk->top + 1);
-    void* elmnt_addr = (int8_t*)sstk->buffer + (sstk->top*sstk->elmnt_size - rev_index*sstk->elmnt_size);
+    index = index % (sstk->top + 1);
+    void* element_addr = sa_get(sstk->buffer, sstk->top-index);
 
-    return elmnt_addr;
-}
-
-static inline void* _swap(sstackptr_t sstk) {
-    void* tmp_elmnt_store = malloc(sstk->elmnt_size);
-
-    if (!tmp_elmnt_store) {
-        AND_PRINT_ERR("ss_swap", "Unable to allocate memory for temporary storage")
-        return AND_PNOK;
-    }
-
-    void* top_addr = (int8_t*)sstk->buffer + sstk->top*sstk->elmnt_size;
-    void* prev_top_addr = (int8_t*)sstk->buffer + (sstk->top-1)*sstk->elmnt_size;
-
-    void* tmp_memcpy_stat = memcpy(tmp_elmnt_store, top_addr, sstk->elmnt_size);
-
-    if (!tmp_memcpy_stat) {
-        AND_PRINT_ERR("ss_swap", "Unable to copy element to temporary location");
-        return AND_PNOK;
-    }
-
-    void* top_memcpy_stat = memcpy(top_addr, prev_top_addr, sstk->elmnt_size);
-
-    if (!top_memcpy_stat) {
-        AND_PRINT_ERR("ss_swap", "Unable to copy element to top location");
-        return AND_PNOK;
-    }
-
-    void* prev_top_memcpy_stat = memcpy(prev_top_addr, tmp_elmnt_store, sstk->elmnt_size);
-
-    if (!prev_top_memcpy_stat) {
-        AND_PRINT_ERR("ss_swap", "Unable to copy element to prev-top location");
-        return AND_PNOK;
-    }
-
-    free(tmp_elmnt_store);
-
-    return prev_top_addr;
-
+    return element_addr;
 }
 
 void* ss_swap(sstackptr_t sstk) {
@@ -194,24 +136,26 @@ void* ss_swap(sstackptr_t sstk) {
 
     if (sstk->top == 0) {
         AND_PRINT_WARN("ss_swap", "Unable to perform swap, stack contains just one element")
-        return ((int8_t*)sstk->buffer + sstk->top*sstk->elmnt_size);
+        return sa_get(sstk->buffer, sstk->top);
     }
 
-    return _swap(sstk);
+    void* prev_top_addr = sa_swap(sstk->buffer, sstk->top, sstk->top-1);
+
+    if (!prev_top_addr) {
+        AND_PRINT_ERR("ss_swap", "Unable to swap elements")
+        return AND_PNOK;
+    }
+
+    return prev_top_addr;
 }
 
-int8_t ss_destroy(sstackptr_t sstk, AND_BOOL mem_allocd_elmnt) {
+int8_t ss_destroy(sstackptr_t sstk, AND_BOOL has_mem_allocd_elmnt) {
     if (!sstk) {
         AND_PRINT_ERR("ss_destroy", "Invalid address as argument")
         return AND_NOK;
     }
 
-    if ((mem_allocd_elmnt & AND_TRUE) == AND_TRUE) {
-        for (size_t i=0; i <= sstk->top; i++) {
-            void* currnt_elmnt = (void*)(*((uintptr_t*)sstk->buffer + i));
-            free(currnt_elmnt);
-        }
-    }
+    sa_destroy(sstk->buffer, has_mem_allocd_elmnt);
 
     free(sstk->buffer);
     free(sstk);
