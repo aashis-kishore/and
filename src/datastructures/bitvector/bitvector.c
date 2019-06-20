@@ -404,7 +404,9 @@ int8_t bv_setBitRange(bitvectorptr_t bv, size_t lindex, size_t uindex) {
         } else {
             bv->buffer[index] |= ~0;
         }
-    }    
+    }
+
+    bv->num_bits_set += (uindex-lindex+1);    
 
     return AND_OK;
 }
