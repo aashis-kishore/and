@@ -263,7 +263,7 @@ START_TEST(test_sa_delete__args__NULL__0) {
 
 // test: sa_delete(sarr, 68)
 START_TEST(test_sa_delete__args__sarr__68) {
-    sarrayptr_t sarr = sa_create(0, sizeof(int));
+    sarrayptr_t sarr = sa_create(96, sizeof(int));
 
     int elements[3] = { 1313, 2323, 3333 };
     ck_assert_int_eq(sa_insert(sarr, &elements[0], 67, 0), AND_OK);
@@ -287,15 +287,15 @@ START_TEST(test_sa_delete__args__sarr__68) {
 
 // test: sa_delete(sarr, 69) -- MEM ALLOCED
 START_TEST(test_sa_delete__args__sarr__69) {
-    sarrayptr_t sarr = sa_create(0, sizeof(char*));
+    sarrayptr_t sarr = sa_create(96, sizeof(char*));
 
     char* str1 = "one";
     char* str2 = "two one";
     char* str3 = "three two one";
 
     ck_assert_int_eq(sa_insert(sarr, str1, 68, strlen(str1)+1), AND_OK);
-    ck_assert_int_eq(sa_insert(sarr, str1, 69, strlen(str2)+1), AND_OK);
-    ck_assert_int_eq(sa_insert(sarr, str1, 70, strlen(str3)+1), AND_OK);
+    ck_assert_int_eq(sa_insert(sarr, str2, 69, strlen(str2)+1), AND_OK);
+    ck_assert_int_eq(sa_insert(sarr, str3, 70, strlen(str3)+1), AND_OK);
 
     void* str = sa_delete(sarr, 69);
     ck_assert_ptr_nonnull(str);
