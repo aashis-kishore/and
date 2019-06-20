@@ -134,7 +134,9 @@ void* sa_get(sarrayptr_t sarr, size_t index) {
         return AND_PNOK;
     }
 
-    void* element = (int8_t*)sarr->buffer + index*sarr->element_size;
+    int8_t is_bit_clear_stat = bv_isBitClear(sarr->bv, index);
+
+    void* element = (is_bit_clear_stat != AND_NOK && is_bit_clear_stat == AND_TRUE) ? AND_PNOK : (int8_t*)sarr->buffer + index*sarr->element_size;
 
     return element;
 }
