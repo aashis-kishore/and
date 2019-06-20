@@ -115,6 +115,68 @@ Suite* sa_getMaxNumElements_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [sa_getElementSize(sarrayptr_t, int8_t*)]
+// test: sa_getElementSize(NULL, NULL)
+START_TEST(test_sa_getElementSize__args__NULL__NULL) {
+    ck_assert_int_eq(sa_getElementSize(NULL, NULL), AND_ZERO);
+} END_TEST
+
+// test: sa_getElementSize(NULL, status)
+START_TEST(test_sa_getElementSize__args__NULL__status) {
+    int8_t status = AND_OK;
+
+    ck_assert_int_eq(sa_getElementSize(NULL, &status), AND_ZERO);
+    ck_assert_int_eq(status, AND_NOK);
+} END_TEST
+
+// test: sa_getElementSize(sarr, NULL)
+START_TEST(test_sa_getElementSize__args__sarr__NULL) {
+    size_t element_size = sizeof(double);
+    sarrayptr_t sarr = sa_create(0, element_size);
+    
+    ck_assert_ptr_nonnull(sarr);
+    ck_assert_int_eq(sa_getElementSize(sarr, NULL), element_size);
+
+    sa_destroy(sarr, AND_FALSE);
+} END_TEST
+
+// test: sa_getElementSize(sarr, status)
+START_TEST(test_sa_getElementSize__args__sarr__status) {
+    size_t element_size = sizeof(char);
+    sarrayptr_t sarr = sa_create(0, element_size);
+
+    int8_t status = AND_NOK;
+    
+    ck_assert_ptr_nonnull(sarr);
+    ck_assert_int_eq(sa_getElementSize(sarr, &status), element_size);
+    ck_assert_int_eq(status, AND_OK);
+
+    sa_destroy(sarr, AND_FALSE);
+} END_TEST
+
+
+Suite* sa_getElementSize_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("GetElementSize");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_sa_getElementSize__args__NULL__NULL);
+    tcase_add_test(tc_failure, test_sa_getElementSize__args__NULL__status);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_sa_getElementSize__args__sarr__NULL);
+    tcase_add_test(tc_success, test_sa_getElementSize__args__sarr__status);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+// ==================================================================================================
+
+
 // ================================================================================================== [sa_insert(sarrayptr_t, void*, size_t, size_t)]
 // test: sa_insert(NULL, NULL, 0, 0)
 START_TEST(test_sa_insert__args__NULL__NULL__0__0) {
@@ -308,6 +370,7 @@ int main(int argc, char** argv) {
     
     SRunner* suite_runner = srunner_create(sa_create_suite());
     srunner_add_suite(suite_runner, sa_getMaxNumElements_suite());
+    srunner_add_suite(suite_runner, sa_getElementSize_suite());
     srunner_add_suite(suite_runner, sa_insert_suite());
     srunner_add_suite(suite_runner, sa_get_suite());
     srunner_add_suite(suite_runner, sa_destroy_suite());
