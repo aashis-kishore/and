@@ -1787,11 +1787,16 @@ START_TEST(test_bv_setBitRange__args__bv__10__256__STATIC) {
 START_TEST(test_bv_setBitRange__args__bv__10__256__DYNAMIC) {
     bitvectorptr_t bv = bv_create(0, 0, 0, AND_TRUE);
 
+    bv_setBit(bv, 4);
+    bv_setBit(bv, 5);
+    size_t num_bits_set = bv_getNumBitsSet(bv, NULL);
+
     ck_assert_int_eq(bv_setBitRange(bv, 10, 256), AND_OK);
     int8_t num_bit_set_In_range_stat = AND_NOK;
     size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, 10, 256, &num_bit_set_In_range_stat);
     ck_assert_int_eq(num_bit_set_In_range_stat, AND_OK);
     ck_assert_int_eq(num_bits_set_in_range, 247);
+    ck_assert_int_eq(bv_getNumBitsSet(bv, NULL), num_bits_set+247);
     ck_assert_int_eq(bv_getVectorSize(bv, NULL), 12);
 
     bv_destroy(bv);
