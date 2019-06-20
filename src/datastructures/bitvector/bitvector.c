@@ -349,8 +349,7 @@ int8_t bv_toggleBit(bitvectorptr_t bv, size_t index) {
     uint32_t mask = 1<<((BV_CHUNK_SIZE-1) - index);
 
     uint32_t is_bit_set = !!(bv->buffer[index/BV_CHUNK_SIZE] & mask);
-    if (!is_bit_set)
-        bv->num_bits_set++;
+    (is_bit_set) ? bv->num_bits_set-- : bv->num_bits_set++;
 
     bv->buffer[index/BV_CHUNK_SIZE] ^= mask;
 
