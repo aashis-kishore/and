@@ -516,6 +516,48 @@ Suite* bv_getNumBitsSet_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [bv_getBuffer(bitvectorptr_t)]
+// test: bv_getBuffer(NULL)
+START_TEST(test_bv_getBuffer__args__NULL) {
+    ck_assert_ptr_null(bv_getBuffer(NULL));
+} END_TEST
+
+// test: bv_getBuffer(bv)
+START_TEST(test_bv_getBuffer__args__bv) {
+    bitvectorptr_t bv = bv_create(0, 0, 0, AND_FALSE);
+
+    bv_setBitRange(bv, 128, 143);
+    bv_setBitRange(bv, 180, 243);
+
+    uint32_t* buffer_clone = bv_getBuffer(bv);
+
+    ck_assert_ptr_nonnull(buffer_clone);
+    free(buffer_clone);
+
+    bv_destroy(bv);
+} END_TEST
+
+
+Suite* bv_getBuffer_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("GetBuffer");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_bv_getBuffer__args__NULL);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_bv_getBuffer__args__bv);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+// ==================================================================================================
+
+
 // ================================================================================================== [bv_isBitSet(bitvectorptr_t, size_t)]
 // test: bv_isBitSet(NULL, 3)
 START_TEST(test_bv_isBitSet__args__NULL__3) {
@@ -2121,6 +2163,7 @@ int main(int argc, char** argv) {
     SRunner* suite_runner = srunner_create(bv_create_suite());
     srunner_add_suite(suite_runner, bv_getVectorSize_suite());    
     srunner_add_suite(suite_runner, bv_getNumBitsSet_suite());
+    srunner_add_suite(suite_runner, bv_getBuffer_suite());
     srunner_add_suite(suite_runner, bv_isBitSet_suite());
     srunner_add_suite(suite_runner, bv_isBitClear_suite());
     srunner_add_suite(suite_runner, bv_numBitsSetInRange_suite());
