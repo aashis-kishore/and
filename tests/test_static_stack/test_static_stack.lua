@@ -27,9 +27,9 @@ project "test_static_stack"
 
     links {
         "check", "m", "rt",
-        "bitvector",
-        "static_array",
         "static_stack",
+        "static_array",
+        "bitvector",
     }
 
     files {
