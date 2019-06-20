@@ -255,6 +255,86 @@ Suite* sa_insert_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [sa_delete(sarrayptr_t, size_t)]
+// test: sa_delete(NULL, 0)
+START_TEST(test_sa_delete__args__NULL__0) {
+    ck_assert_ptr_null(sa_delete(NULL, 0));
+} END_TEST
+
+// test: sa_delete(sarr, 68)
+START_TEST(test_sa_delete__args__sarr__68) {
+    sarrayptr_t sarr = sa_create(0, sizeof(int));
+
+    int elements[3] = { 1313, 2323, 3333 };
+    ck_assert_int_eq(sa_insert(sarr, &elements[0], 67, 0), AND_OK);
+    ck_assert_int_eq(sa_insert(sarr, &elements[1], 68, 0), AND_OK);
+    ck_assert_int_eq(sa_insert(sarr, &elements[2], 69, 0), AND_OK);
+
+    void* elmnt = sa_delete(sarr, 68);
+    ck_assert_ptr_nonnull(elmnt);
+    ck_assert_int_eq(and_getElement(elmnt, int), elements[1]);
+    ck_assert_ptr_null(sa_get(sarr, 68));
+
+    elmnt = sa_get(sarr, 67);
+    ck_assert_ptr_nonnull(elmnt);
+    ck_assert_int_eq(and_getElement(elmnt, int), elements[0]);
+    elmnt = sa_get(sarr, 69);
+    ck_assert_ptr_nonnull(elmnt);
+    ck_assert_int_eq(and_getElement(elmnt, int), elements[2]);
+
+    sa_destroy(sarr, AND_FALSE);
+} END_TEST
+
+// test: sa_delete(sarr, 69) -- MEM ALLOCED
+START_TEST(test_sa_delete__args__sarr__69) {
+    sarrayptr_t sarr = sa_create(0, sizeof(char*));
+
+    char* str1 = "one";
+    char* str2 = "two one";
+    char* str3 = "three two one";
+
+    ck_assert_int_eq(sa_insert(sarr, str1, 68, strlen(str1)+1), AND_OK);
+    ck_assert_int_eq(sa_insert(sarr, str1, 69, strlen(str2)+1), AND_OK);
+    ck_assert_int_eq(sa_insert(sarr, str1, 70, strlen(str3)+1), AND_OK);
+
+    void* str = sa_delete(sarr, 69);
+    ck_assert_ptr_nonnull(str);
+    ck_assert_str_eq(and_getElement(str, char*), str2);
+    ck_assert_ptr_null(sa_get(sarr, 69));
+    ck_assert_ptr_null(sa_delete(sarr, 69));
+
+    str = sa_get(sarr, 68);
+    ck_assert_ptr_nonnull(str);
+    ck_assert_str_eq(and_getElement(str, char*), str1);
+    str = sa_get(sarr, 70);
+    ck_assert_ptr_nonnull(str);
+    ck_assert_str_eq(and_getElement(str, char*), str3);
+
+    sa_destroy(sarr, AND_TRUE);
+} END_TEST
+
+
+Suite* sa_delete_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("Delete");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_sa_delete__args__NULL__0);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_failure, test_sa_delete__args__sarr__68);
+    tcase_add_test(tc_failure, test_sa_delete__args__sarr__69);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+// ==================================================================================================
+
+
 // ================================================================================================== [sa_get(sarrayptr_t, size_t)]
 // test: sa_get(NULL, 0)
 START_TEST(test_sa_get__args__NULL__0) {
@@ -372,6 +452,7 @@ int main(int argc, char** argv) {
     srunner_add_suite(suite_runner, sa_getMaxNumElements_suite());
     srunner_add_suite(suite_runner, sa_getElementSize_suite());
     srunner_add_suite(suite_runner, sa_insert_suite());
+    srunner_add_suite(suite_runner, sa_delete_suite());
     srunner_add_suite(suite_runner, sa_get_suite());
     srunner_add_suite(suite_runner, sa_destroy_suite());
 
