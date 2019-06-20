@@ -406,9 +406,7 @@ int8_t bv_setBitRange(bitvectorptr_t bv, size_t lindex, size_t uindex) {
         }
     }
 
-    size_t total_num_bits_set = bv_numBitsSetInRange(bv, 0, bv->vector_size*BV_CHUNK_SIZE-1, NULL);
-
-    bv->num_bits_set = total_num_bits_set;    
+    bv->num_bits_set = bv_numBitsSetInRange(bv, 0, bv->vector_size*BV_CHUNK_SIZE-1, NULL);    
 
     return AND_OK;
 }
@@ -442,9 +440,6 @@ int8_t bv_clearBitRange(bitvectorptr_t bv, size_t lindex, size_t uindex) {
     size_t shift_factor;
     uint32_t mask;
 
-    size_t total_num_bits_set = bv_numBitsSetInRange(bv, 0, bv->vector_size*BV_CHUNK_SIZE-1, NULL);
-    size_t num_bits_set_in_range = bv_numBitsSetInRange(bv, lindex, uindex, NULL);
-
     for (size_t index = chunk_lindex; index <= chunk_uindex; index++) {
         if (index == chunk_lindex && (lindex % BV_CHUNK_SIZE) != 0) {
             shift_factor = (index+1)*BV_CHUNK_SIZE - lindex;
@@ -466,7 +461,7 @@ int8_t bv_clearBitRange(bitvectorptr_t bv, size_t lindex, size_t uindex) {
         }
     }    
 
-    bv->num_bits_set = total_num_bits_set - num_bits_set_in_range;
+    bv->num_bits_set = bv_numBitsSetInRange(bv, 0, bv->vector_size*BV_CHUNK_SIZE-1, NULL);
 
     return AND_OK;
 }
@@ -520,6 +515,8 @@ int8_t bv_toggleBitRange(bitvectorptr_t bv, size_t lindex, size_t uindex) {
             bv->buffer[index] ^= ~0;
         }
     }    
+
+    bv->num_bits_set = bv_numBitsSetInRange(bv, 0, bv->vector_size*BV_CHUNK_SIZE-1, NULL);
 
     return AND_OK;
 }
