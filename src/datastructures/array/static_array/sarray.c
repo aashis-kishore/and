@@ -114,13 +114,19 @@ int8_t sa_destroy(sarrayptr_t sarr, AND_BOOL has_mem_alloced_element) {
     }
 
     if (has_mem_alloced_element) {
+        uint32_t* buffer_clone = bv_getBuffer(sarr->bv);
+
         for (size_t i=0; i < sarr->max_num_elements; i++) {
-            int8_t status = bv_isBitSet(sarr->bv, i);
-            if (status != AND_NOK && status == AND_TRUE) {
-                void* currnt_elmnt = (void*)(*((uintptr_t*)sarr->buffer + i));
-                free(currnt_elmnt);
+            size_t index = i % (bv_getVectorSize(sarr->bv, NULL)*BV_CHUNK_SIZE);
+            uint32_t mask = 1<<((BV_CHUNK_SIZE-1) - index);
+
+            if (buffer_clone[index/BV_CHUNK_SIZE] & mask) {
+                void* current_element = (void*)(*((uintptr_t*)sarr->buffer + index));
+                free(current_element);
             }
         }
+
+        free(buffer_clone);
     }
 
     if (bv_destroy(sarr->bv) == AND_NOK) {
