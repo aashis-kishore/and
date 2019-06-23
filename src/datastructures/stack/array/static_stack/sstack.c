@@ -157,7 +157,6 @@ int8_t ss_destroy(sstackptr_t sstk, AND_BOOL has_mem_allocd_elmnt) {
 
     sa_destroy(sstk->buffer, has_mem_allocd_elmnt);
 
-    free(sstk->buffer);
     free(sstk);
 
     return AND_OK;
