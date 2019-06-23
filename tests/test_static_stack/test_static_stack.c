@@ -304,6 +304,7 @@ START_TEST(test_ss_pop__args__sstk) {
 
     ck_assert_ptr_nonnull(popped_elmnt);
     ck_assert_int_eq(and_getElement(popped_elmnt, int), 12);
+
     ss_destroy(sstk, AND_FALSE);
 } END_TEST
 
@@ -317,6 +318,8 @@ START_TEST(test_ss_pop__args__sstk__MEM_ALLOCED) {
 
     ck_assert_ptr_nonnull(popped_elmnt);
     ck_assert_str_eq(and_getElement(popped_elmnt, char*), elmnt);
+
+    free(and_getElement(popped_elmnt, char*));
     ss_destroy(sstk, AND_TRUE);
 } END_TEST
 
