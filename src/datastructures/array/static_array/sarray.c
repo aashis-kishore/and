@@ -87,8 +87,9 @@ int8_t sa_insert(sarrayptr_t sarr, void* element, size_t index, size_t element_s
         return AND_NOK;
     }
 
+    void* element_copy = NULL;
     if (element_size) {
-        void* element_copy = malloc(element_size);
+        element_copy = malloc(element_size);
 
         if (!element_copy) {
             AND_PRINT_ERR("sa_insert", "Unable to allocate memory for element")
@@ -112,11 +113,13 @@ int8_t sa_insert(sarrayptr_t sarr, void* element, size_t index, size_t element_s
 
     if (!memcpy_stat) {
         AND_PRINT_ERR("sa_insert", "Unable to copy element to static array")
+        free(element_copy);
         return AND_NOK;
     }
 
     if (bv_setBit(sarr->bv, index) == AND_NOK) {
         AND_PRINT_ERR("sa_insert", "Unable to copy element to static array")
+        free(element_copy);
         return AND_NOK;
     }
 
@@ -225,7 +228,7 @@ int8_t sa_destroy(sarrayptr_t sarr, AND_BOOL has_mem_alloced_element) {
             uint32_t mask = 1<<((BV_CHUNK_SIZE-1) - index);
 
             if (buffer_clone[index/BV_CHUNK_SIZE] & mask) {
-                void* current_element = (void*)(*((uintptr_t*)sarr->buffer + index));
+                void* current_element = (void*)(*((uintptr_t*)sarr->buffer + i));
                 free(current_element);
             }
         }
