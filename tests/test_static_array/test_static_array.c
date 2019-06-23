@@ -302,6 +302,7 @@ START_TEST(test_sa_delete__args__sarr__69) {
     ck_assert_str_eq(and_getElement(str, char*), str2);
     ck_assert_ptr_null(sa_get(sarr, 69));
     ck_assert_ptr_null(sa_delete(sarr, 69));
+    free(and_getElement(str, char*));
 
     str = sa_get(sarr, 68);
     ck_assert_ptr_nonnull(str);
