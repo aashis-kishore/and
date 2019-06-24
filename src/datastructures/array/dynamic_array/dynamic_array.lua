@@ -7,6 +7,15 @@ project "dynamic_array"
 
     includedirs {
         "%{wks.location}/src/and/",
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/bitvector/include/",
+    }
+
+    libdirs {
+        "%{wks.location}/build/%{cfg.buildcfg}/lib/bitvector/lib/",
+    }
+
+    links {
+        "bitvector",
     }
 
     filter "configurations:debug"
@@ -15,6 +24,14 @@ project "dynamic_array"
         }
 
         symbols "On"
+
+        buildoptions {
+            "--std=c99",
+            "-pedantic",
+            "-Wall",
+            "-Werror",
+            "-g",
+        }
     
     filter "configurations:release"
         defines {
@@ -23,17 +40,17 @@ project "dynamic_array"
 
         optimize "On"
 
+        buildoptions {
+            "--std=c99",
+            "-pedantic",
+            "-Wall",
+            "-Werror",
+        }
+
     filter {}
 
     files {
         "*.c"
-    }
-
-    buildoptions {
-        "--std=c99",
-        "-pedantic",
-        "-Wall",
-        "-Werror"
     }
 
     postbuildcommands {
