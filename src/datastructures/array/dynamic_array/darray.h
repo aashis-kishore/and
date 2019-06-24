@@ -7,6 +7,8 @@
 typedef struct darray* darrayptr_t;
 
 #define DA_DEFAULT_SIZE ((size_t)32)
+#define DA_DEFAULT_GROWTH_FACTOR ((uint8_t)150)
+#define DA_DEFAULT_LOAD_FACTOR ((uint8_t)75)
 
 darrayptr_t da_create(size_t, size_t, uint8_t, uint8_t);
 size_t da_getMaxNumElements(darrayptr_t, int8_t*);
