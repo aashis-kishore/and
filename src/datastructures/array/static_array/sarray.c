@@ -176,7 +176,7 @@ void* sa_delete(sarrayptr_t sarr, size_t index) {
         return AND_PNOK;
     }
 
-    if (is_bit_clear_stat == AND_FALSE && sarr->num_elements)
+    if (is_bit_clear_stat == AND_FALSE)
         sarr->num_elements--;
 
     void* element = (is_bit_clear_stat == AND_TRUE) ? AND_PNOK : (int8_t*)sarr->buffer + index*sarr->element_size;
