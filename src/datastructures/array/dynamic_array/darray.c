@@ -106,6 +106,33 @@ void* da_swap(darrayptr_t darr, size_t index_x, size_t index_y) {
 }
 
 int8_t da_destroy(darrayptr_t darr, AND_BOOL has_mem_alloced_element) {
-    // TODO
+    if (!darr) {
+        AND_PRINT_ERR("da_destroy", "Invalid address as argument")
+        return AND_NOK;
+    }
+
+    if (has_mem_alloced_element) {
+        uint32_t* buffer_clone = bv_getBuffer(darr->bv);
+
+        for (size_t i=0; i < darr->max_num_elements; i++) {
+            size_t index = i % (bv_getVectorSize(darr->bv, NULL)*BV_CHUNK_SIZE);
+            uint32_t mask = 1<<((BV_CHUNK_SIZE-1) - index);
+
+            if (buffer_clone[index/BV_CHUNK_SIZE] & mask) {
+                void* current_element = (void*)(*((uintptr_t*)darr->buffer + i));
+                free(current_element);
+            }
+        }
+
+        free(buffer_clone);
+    }
+
+    if (bv_destroy(darr->bv) == AND_NOK) {
+        AND_PRINT_WARN("da_destroy", "Unable to destroy auxiliary => (bitvector)")
+    }
+
+    free(darr->buffer);
+    free(darr);
+
     return AND_NOK;
 }
