@@ -4,6 +4,7 @@
 typedef struct sarray {
     void* buffer;
     bitvectorptr_t bv;
+    size_t num_elements;
     size_t max_num_elements;
     size_t element_size;
 } sarray_t;
@@ -41,10 +42,27 @@ sarrayptr_t sa_create(size_t max_num_elements, size_t element_size) {
         return AND_PNOK;
     }
 
+    sarr->num_elements = 0;
     sarr->max_num_elements = max_num_elements;
     sarr->element_size = element_size;
 
     return sarr;
+}
+
+size_t sa_getNumElements(sarrayptr_t sarr, int8_t* status) {
+    if (!sarr) {
+        AND_PRINT_ERR("sa_getNumElements", "Invalid address as argument")
+
+        if (status)
+            *status = AND_NOK;
+
+        return AND_ZERO;
+    }
+
+    if (status)
+        *status = AND_OK;
+    
+    return sarr->num_elements;
 }
 
 size_t sa_getMaxNumElements(sarrayptr_t sarr, int8_t* status) {
@@ -120,11 +138,19 @@ int8_t sa_insert(sarrayptr_t sarr, void* element, size_t index, size_t element_s
         return AND_NOK;
     }
 
+    int8_t is_bit_set_stat = bv_isBitSet(sarr->bv, index);
+
+    if (is_bit_set_stat == AND_NOK)
+        return AND_NOK;
+
     if (bv_setBit(sarr->bv, index) == AND_NOK) {
         AND_PRINT_ERR("sa_insert", "Unable to copy element to static array")
         free(element_copy);
         return AND_NOK;
     }
+
+    if (is_bit_set_stat == AND_FALSE)
+        sarr->num_elements++;
 
     return AND_OK;
 }
@@ -142,12 +168,18 @@ void* sa_delete(sarrayptr_t sarr, size_t index) {
 
     int8_t is_bit_clear_stat = bv_isBitClear(sarr->bv, index);
 
+    if (is_bit_clear_stat == AND_NOK)
+        return AND_PNOK;
+
     if (bv_clearBit(sarr->bv, index) == AND_NOK) {
         AND_PRINT_ERR("sa_delete", "Unable to clear corresponding bit")
         return AND_PNOK;
     }
 
-    void* element = (is_bit_clear_stat != AND_NOK && is_bit_clear_stat == AND_TRUE) ? AND_PNOK : (int8_t*)sarr->buffer + index*sarr->element_size;
+    if (is_bit_clear_stat == AND_FALSE && sarr->num_elements)
+        sarr->num_elements--;
+
+    void* element = (is_bit_clear_stat == AND_TRUE) ? AND_PNOK : (int8_t*)sarr->buffer + index*sarr->element_size;
 
     return element;
 }
