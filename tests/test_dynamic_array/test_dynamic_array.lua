@@ -25,6 +25,7 @@ project "test_dynamic_array"
     links {
         "check", "m", "rt",
         "dynamic_array",
+        "bitvector",
     }
 
     files {
