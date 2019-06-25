@@ -130,10 +130,72 @@ Suite* da_create_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [da_destroy(darrayptr_t, AND_BOOL)]
+// test: da_destroy(NULL, AND_FALSE)
+START_TEST(test_da_destroy__args__NULL__AND_FALSE) {
+    ck_assert_int_eq(da_destroy(NULL, AND_FALSE), AND_NOK);
+} END_TEST
+
+// test: da_destroy(darr, AND_FALSE)
+START_TEST(test_da_destroy__args__darr__AND_FALSE) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    int element = 101;
+    ck_assert_int_eq(da_insert(darr, &element, 23, 0), AND_OK);
+    element = 103;
+    ck_assert_int_eq(da_insert(darr, &element, 67, 0), AND_OK);
+    element = -90;
+    ck_assert_int_eq(da_insert(darr, &element, 122, 0), AND_OK);
+
+    ck_assert_int_eq(da_destroy(darr, AND_FALSE), AND_OK);
+} END_TEST
+
+// test: da_destroy(darr, AND_TRUE)
+START_TEST(test_da_destroy__args__darr__AND_TRUE) {
+    darrayptr_t darr = da_create(0, sizeof(char*), 0, 0);
+
+    char *str1 = "one", *str2 = "two one", *str3 = "three one two";
+
+    ck_assert_int_eq(da_insert(darr, &str1, 11, strlen(str1)+1), AND_OK);
+    ck_assert_int_eq(da_insert(darr, &str2, 34, strlen(str2)+1), AND_OK);
+    ck_assert_int_eq(da_insert(darr, &str3, 131, strlen(str3)+1), AND_OK);
+
+    void* str = da_delete(darr, 34);
+    ck_assert_ptr_nonnull(str);
+    ck_assert_str_eq(and_getElement(str, char*), str2);
+    ck_assert_ptr_null(da_delete(darr, 34));
+
+    ck_assert_int_eq(da_destroy(darr, AND_TRUE), AND_OK);
+} END_TEST
+
+
+Suite* da_destroy_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("Destroy");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_da_destroy__args__NULL__AND_FALSE);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_da_destroy__args__darr__AND_FALSE);
+    tcase_add_test(tc_success, test_da_destroy__args__darr__AND_TRUE);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 int main(int argc, char** argv) {
     int num_tests_failed;
     
     SRunner* suite_runner = srunner_create(da_create_suite());
+    srunner_add_suite(suite_runner, da_destroy_suite());
 
     if (argc == 1) {
         srunner_run_all(suite_runner, CK_NORMAL);
