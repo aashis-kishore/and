@@ -6,7 +6,9 @@
 
 typedef struct sarray* sarrayptr_t;
 
-#define SA_DEFAULT_SIZE ((size_t)32)
+#ifndef SA_DEFAULT_SIZE
+    #define SA_DEFAULT_SIZE ((size_t)32)
+#endif
 
 sarrayptr_t sa_create(size_t, size_t);
 size_t sa_getMaxNumElements(sarrayptr_t, int8_t*);

@@ -28,6 +28,7 @@ sarrayptr_t sa_create(size_t max_num_elements, size_t element_size) {
 
     if (!sarr->buffer) {
         AND_PRINT_ERR("sa_create", "Unable to allocate memory for array buffer")
+        free(sarr);
         return AND_PNOK;
     }
 
@@ -35,6 +36,8 @@ sarrayptr_t sa_create(size_t max_num_elements, size_t element_size) {
 
     if (!sarr->bv) {
         AND_PRINT_ERR("sa_create", "Unable to create auxiliaries => (bitvector)")
+        free(sarr->buffer);
+        free(sarr);
         return AND_PNOK;
     }
 
