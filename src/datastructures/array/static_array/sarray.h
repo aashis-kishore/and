@@ -11,6 +11,7 @@ typedef struct sarray* sarrayptr_t;
 #endif
 
 sarrayptr_t sa_create(size_t, size_t);
+size_t sa_getNumElements(sarrayptr_t, int8_t*);
 size_t sa_getMaxNumElements(sarrayptr_t, int8_t*);
 size_t sa_getElementSize(sarrayptr_t, int8_t*);
 int8_t sa_insert(sarrayptr_t, void*, size_t, size_t);
