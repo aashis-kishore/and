@@ -56,6 +56,140 @@ Suite* sa_create_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [sa_getNumElements(sarrayptr_t. int8_t*)]
+// test: sa_getNumElements(NULL, NULL)
+START_TEST(test_sa_getNumElements__args__NULL__NULL) {
+    ck_assert_int_eq(sa_getNumElements(NULL, NULL), AND_ZERO);
+} END_TEST
+
+// test: sa_getNumElements(sarr, stat)
+START_TEST(test_sa_getNumElements__args__sarr__stat) {
+    sarrayptr_t sarr = sa_create(0, sizeof(int));
+
+    int8_t get_num_elements_stat = AND_NOK;
+    size_t num_elements = sa_getNumElements(sarr, &get_num_elements_stat);
+
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+    ck_assert_int_eq(num_elements, AND_ZERO);
+
+    sa_destroy(sarr, AND_FALSE);
+} END_TEST
+
+// test: sa_getNumElements(sarr, stat) -- DELETE 1 ELEMENT
+START_TEST(test_sa_getNumElements__args__sarr__stat__DEL_1) {
+    sarrayptr_t sarr = sa_create(0, sizeof(int));
+
+    ck_assert_ptr_null(sa_delete(sarr, 22));
+
+    int8_t get_num_elements_stat = AND_NOK;
+    size_t num_elements = sa_getNumElements(sarr, &get_num_elements_stat);
+
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+    ck_assert_int_eq(num_elements, AND_ZERO);
+
+    sa_destroy(sarr, AND_FALSE);
+} END_TEST
+
+// test: sa_getNumElements(sarr, stat) -- INSERT 4 ELEMENTS
+START_TEST(test_sa_getNumElements__args__sarr__stat__INS_4) {
+    sarrayptr_t sarr = sa_create(90, sizeof(int));
+
+    int element = 20;
+    ck_assert_int_eq(sa_insert(sarr, &element, 12, 0), AND_OK);
+    element = 101;
+    ck_assert_int_eq(sa_insert(sarr, &element, 56, 0), AND_OK);
+    element = 1004;
+    ck_assert_int_eq(sa_insert(sarr, &element, 89, 0), AND_OK);
+    element = -67;
+    ck_assert_int_eq(sa_insert(sarr, &element, 48, 0), AND_OK);
+
+    int8_t get_num_elements_stat = AND_NOK;
+    size_t num_elements = sa_getNumElements(sarr, &get_num_elements_stat);
+
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+    ck_assert_int_eq(num_elements, 4);
+
+    sa_destroy(sarr, AND_FALSE);
+} END_TEST
+
+// test_sa_getNumElements(sarr, stat) -- INSERT 2 ELEMENTS, DELETE 4 ELEMENTS, INSERT 1 ELEMENT
+START_TEST(test_sa_getNumElements__args__sarr__stat__INS_2_DEL_4_INS_1) {
+    sarrayptr_t sarr = sa_create(90, sizeof(int));
+
+    int element = 1004;
+    ck_assert_int_eq(sa_insert(sarr, &element, 89, 0), AND_OK);
+    element = -67;
+    ck_assert_int_eq(sa_insert(sarr, &element, 48, 0), AND_OK);
+
+    int8_t get_num_elements_stat = AND_NOK;
+    size_t num_elements = sa_getNumElements(sarr, &get_num_elements_stat);
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+    ck_assert_int_eq(num_elements, 2);
+
+    ck_assert_ptr_nonnull(sa_delete(sarr, 48));
+
+    get_num_elements_stat = AND_NOK;
+    num_elements = sa_getNumElements(sarr, &get_num_elements_stat);
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+    ck_assert_int_eq(num_elements, 1);
+
+    ck_assert_ptr_nonnull(sa_delete(sarr, 89));
+
+    get_num_elements_stat = AND_NOK;
+    num_elements = sa_getNumElements(sarr, &get_num_elements_stat);
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+    ck_assert_int_eq(num_elements, 0);
+
+    ck_assert_ptr_null(sa_delete(sarr, 89));
+
+    get_num_elements_stat = AND_NOK;
+    num_elements = sa_getNumElements(sarr, &get_num_elements_stat);
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+    ck_assert_int_eq(num_elements, 0);
+
+    ck_assert_ptr_null(sa_delete(sarr, 0));
+    
+    get_num_elements_stat = AND_NOK;
+    num_elements = sa_getNumElements(sarr, &get_num_elements_stat);
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+    ck_assert_int_eq(num_elements, 0);
+
+    element = -90;
+    ck_assert_int_eq(sa_insert(sarr, &element, 89, 0), AND_OK);
+
+    get_num_elements_stat = AND_NOK;
+    num_elements = sa_getNumElements(sarr, &get_num_elements_stat);
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+    ck_assert_int_eq(num_elements, 1);
+
+    sa_destroy(sarr, AND_FALSE);
+} END_TEST
+
+
+Suite* sa_getNumElements_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("GetNumElements");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_sa_getNumElements__args__NULL__NULL);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_sa_getNumElements__args__sarr__stat);
+    tcase_add_test(tc_success, test_sa_getNumElements__args__sarr__stat__DEL_1);
+    tcase_add_test(tc_success, test_sa_getNumElements__args__sarr__stat__INS_4);
+    tcase_add_test(tc_success, test_sa_getNumElements__args__sarr__stat__INS_2_DEL_4_INS_1);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [sa_getMaxNumElements(sarrayptr_t, int8_t*)]
 // test: sa_getMaxNumElements(NULL, NULL)
 START_TEST(test_sa_getMaxNumElements__args__NULL__NULL) {
@@ -526,6 +660,7 @@ int main(int argc, char** argv) {
     int num_tests_failed;
     
     SRunner* suite_runner = srunner_create(sa_create_suite());
+    srunner_add_suite(suite_runner, sa_getNumElements_suite());
     srunner_add_suite(suite_runner, sa_getMaxNumElements_suite());
     srunner_add_suite(suite_runner, sa_getElementSize_suite());
     srunner_add_suite(suite_runner, sa_insert_suite());
