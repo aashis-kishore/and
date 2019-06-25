@@ -23,6 +23,7 @@ typedef struct darray* darrayptr_t;
 #endif
 
 darrayptr_t da_create(size_t, size_t, uint8_t, uint8_t);
+size_t da_getNumElements(darrayptr_t, int8_t*);
 size_t da_getMaxNumElements(darrayptr_t, int8_t*);
 size_t da_getElementSize(darrayptr_t, int8_t*);
 size_t da_getGrowthFactor(darrayptr_t, int8_t*);
