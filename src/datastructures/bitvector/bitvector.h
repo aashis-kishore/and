@@ -7,8 +7,21 @@
 typedef struct bitvector* bitvectorptr_t;
 
 #define BV_DEFAULT_VECTOR_SIZE ((size_t)256)
-#define BV_DEFAULT_GROWTH_FACTOR ((uint8_t)150)
-#define BV_DEFAULT_LOAD_FACTOR ((uint8_t)75)
+
+#define BV_MIN_GROWTH_FACTOR ((uint8_t)125)
+#define BV_MAX_GROWTH_FACTOR ((uint8_t)200)
+
+#ifndef BV_DEFAULT_GROWTH_FACTOR
+    #define BV_DEFAULT_GROWTH_FACTOR ((uint8_t)150)
+#endif
+
+#define BV_MIN_LOAD_FACTOR ((uint8_t)25)
+#define BV_MAX_LOAD_FACTOR ((uint8_t)100)
+
+#ifndef BV_DEFAULT_LOAD_FACTOR
+    #define BV_DEFAULT_LOAD_FACTOR ((uint8_t)75)
+#endif
+
 #define BV_CHUNK_SIZE ((size_t)32)
 
 

@@ -13,16 +13,16 @@ typedef struct bitvector {
 
 
 bitvectorptr_t bv_create(size_t vector_size, uint8_t growth_factor, uint8_t load_factor, AND_BOOL is_dynamic) {
-    vector_size = (vector_size == 0 || vector_size < BV_DEFAULT_VECTOR_SIZE) ? BV_DEFAULT_VECTOR_SIZE : vector_size;
+    vector_size = (vector_size < BV_DEFAULT_VECTOR_SIZE) ? BV_DEFAULT_VECTOR_SIZE : vector_size;
     growth_factor = (growth_factor == 0) ? BV_DEFAULT_GROWTH_FACTOR : growth_factor;
     load_factor = (load_factor == 0) ? BV_DEFAULT_LOAD_FACTOR : load_factor;
 
-    if (growth_factor < 125 || growth_factor > 200) {
+    if (growth_factor < BV_MIN_GROWTH_FACTOR || growth_factor > BV_MAX_GROWTH_FACTOR) {
         AND_PRINT_ERR("bv_create", "Growth factor is not within allowed limits")
         return AND_PNOK;
     }
 
-    if (load_factor < 25 || load_factor > 100) {
+    if (load_factor < BV_MIN_LOAD_FACTOR || load_factor > BV_MAX_LOAD_FACTOR) {
         AND_PRINT_ERR("bv_create", "Load factor is not within allowed limits")
         return AND_PNOK;
     }
@@ -57,7 +57,7 @@ size_t bv_getVectorSize(bitvectorptr_t bv, int8_t* status) {
         AND_PRINT_ERR("bv_getVectorSize", "Invalid address as argument")
         if (status)
             *status = AND_NOK;
-        return AND_OK;  // OK AND NOK => NOK
+        return AND_ZERO;
     }
 
     if (status)
@@ -71,7 +71,7 @@ size_t bv_getNumBitsSet(bitvectorptr_t bv, int8_t* status) {
         AND_PRINT_ERR("bv_getNumBitsSet", "Invalid address as argument")
         if (status)
             *status = AND_NOK;
-        return AND_OK;
+        return AND_ZERO;
     }
 
     if (status)
