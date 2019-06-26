@@ -338,6 +338,82 @@ Suite* da_getElementSize_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [da_getGrowthFactor(darrayptr_t, int8_t*)]
+// test: getGrowthFactor(NULL, stat)
+START_TEST(test_da_getGrowthFactor__args__NULL__stat) {
+    int8_t get_growth_factor_stat = AND_OK;
+
+    ck_assert_int_eq(da_getGrowthFactor(NULL, &get_growth_factor_stat), AND_ZERO);
+    ck_assert_int_eq(get_growth_factor_stat, AND_NOK);
+} END_TEST
+
+// test: getGrowthFactor(darr, stat)
+START_TEST(test_da_getGrowthFactor__args__darr__stat) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    int8_t get_growth_factor_stat = AND_NOK;
+
+    ck_assert_int_eq(da_getGrowthFactor(darr, &get_growth_factor_stat), DA_DEFAULT_GROWTH_FACTOR);
+    ck_assert_int_eq(get_growth_factor_stat, AND_OK);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+// test: getGrowthFactor(darr, stat) -- NON-DEFAULT GROWTH FACTOR
+START_TEST(test_da_getGrowthFactor__args__darr__stat__NON_DEFAULT) {
+    darrayptr_t darr = da_create(0, sizeof(int), 135, 0);
+
+    int8_t get_growth_factor_stat = AND_NOK;
+
+    ck_assert_int_eq(da_getGrowthFactor(darr, &get_growth_factor_stat), 135);
+    ck_assert_int_eq(get_growth_factor_stat, AND_OK);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+// test: getGrowthFactor(darr, stat) -- RESIZE
+START_TEST(test_da_getGrowthFactor__args__darr__stat__RESIZE) {
+    darrayptr_t darr = da_create(0, sizeof(int), 135, 0);
+
+    int8_t get_growth_factor_stat = AND_NOK;
+
+    ck_assert_int_eq(da_getGrowthFactor(darr, &get_growth_factor_stat), 135);
+    ck_assert_int_eq(get_growth_factor_stat, AND_OK);
+
+    int element = 785;
+    ck_assert_int_eq(da_insert(darr, &element, 48, 0), AND_OK);
+
+    int8_t get_max_num_elements_stat = AND_NOK;
+    ck_assert_int_eq(da_getMaxNumElements(darr, &get_max_num_elements_stat), 44);
+    ck_assert_int_eq(get_max_num_elements_stat, AND_OK);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+
+Suite* da_getGrowthFactor_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("GetGrowthFactor");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_da_getGrowthFactor__args__NULL__stat);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_da_getGrowthFactor__args__darr__stat);
+    tcase_add_test(tc_success, test_da_getGrowthFactor__args__darr__stat__NON_DEFAULT);
+    tcase_add_test(tc_success, test_da_getGrowthFactor__args__darr__stat__RESIZE);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [da_destroy(darrayptr_t, AND_BOOL)]
 // test: da_destroy(NULL, AND_FALSE)
 START_TEST(test_da_destroy__args__NULL__AND_FALSE) {
@@ -406,6 +482,7 @@ int main(int argc, char** argv) {
     srunner_add_suite(suite_runner, da_getNumElements_suite());
     srunner_add_suite(suite_runner, da_getMaxNumElements_suite());
     srunner_add_suite(suite_runner, da_getElementSize_suite());
+    srunner_add_suite(suite_runner, da_getGrowthFactor_suite());
     srunner_add_suite(suite_runner, da_destroy_suite());
 
     if (argc == 1) {
