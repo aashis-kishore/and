@@ -231,6 +231,72 @@ Suite* da_getNumElements_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [da_getMaxNumElements(darrayptr_t, int8_t*)]
+// test: da_getMaxNumElements(NULL, stat)
+START_TEST(test_da_getMaxNumElements__args__NULL__stat) {
+    int8_t get_max_num_elements_stat = AND_OK;
+
+    ck_assert_int_eq(da_getMaxNumElements(NULL, &get_max_num_elements_stat), AND_ZERO);
+    ck_assert_int_eq(get_max_num_elements_stat, AND_NOK);
+} END_TEST
+
+// test: da_getMaxNumElements(darr, stat)
+START_TEST(test_da_getMaxNumElements__args__darr__stat) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    int8_t get_max_num_elements_stat = AND_NOK;
+
+    ck_assert_int_eq(da_getMaxNumElements(darr, &get_max_num_elements_stat), DA_DEFAULT_SIZE);
+    ck_assert_int_eq(get_max_num_elements_stat, AND_OK);
+} END_TEST
+
+// test: da_getMaxNumElements(darr, stat) -- NON-DEFAULT SIZE
+START_TEST(test_da_getMaxNumElements__args__darr__stat__NON_DEFAULT_SIZE) {
+    darrayptr_t darr = da_create(100, sizeof(int), 0, 0);
+
+    int8_t get_max_num_elements_stat = AND_NOK;
+
+    ck_assert_int_eq(da_getMaxNumElements(darr, &get_max_num_elements_stat), 100);
+    ck_assert_int_eq(get_max_num_elements_stat, AND_OK);
+} END_TEST
+
+// test: da_getMaxNumElements(darr, stat) -- RESIZE
+START_TEST(test_da_getMaxNumElements__args__darr__stat__RESIZE) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    int element = 1012;
+    ck_assert_int_eq(da_insert(darr, &element, 101, 0), AND_OK);
+
+    int8_t get_max_num_elements_stat = AND_NOK;
+
+    ck_assert_int_eq(da_getMaxNumElements(darr, &get_max_num_elements_stat), 108);
+    ck_assert_int_eq(get_max_num_elements_stat, AND_OK);
+} END_TEST
+
+
+Suite* da_getMaxNumElements_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("GetMaxNumElements");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_da_getMaxNumElements__args__NULL__stat);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_da_getMaxNumElements__args__darr__stat);
+    tcase_add_test(tc_success, test_da_getMaxNumElements__args__darr__stat__NON_DEFAULT_SIZE);
+    tcase_add_test(tc_success, test_da_getMaxNumElements__args__darr__stat__RESIZE);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [da_destroy(darrayptr_t, AND_BOOL)]
 // test: da_destroy(NULL, AND_FALSE)
 START_TEST(test_da_destroy__args__NULL__AND_FALSE) {
@@ -297,6 +363,7 @@ int main(int argc, char** argv) {
     
     SRunner* suite_runner = srunner_create(da_create_suite());
     srunner_add_suite(suite_runner, da_getNumElements_suite());
+    srunner_add_suite(suite_runner, da_getMaxNumElements_suite());
     srunner_add_suite(suite_runner, da_destroy_suite());
 
     if (argc == 1) {
