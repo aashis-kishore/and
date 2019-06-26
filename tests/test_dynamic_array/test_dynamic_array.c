@@ -130,6 +130,107 @@ Suite* da_create_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [da_getNumElements(darrayptr_t, int8_t*)]
+// test: da_getNumElements(NULL, stat)
+START_TEST(test_da_getNumElements__args__NULL__stat) {
+    int8_t get_num_elements_stat = AND_OK;
+    ck_assert_int_eq(da_getNumElements(NULL, &get_num_elements_stat), AND_ZERO);
+    ck_assert_int_eq(get_num_elements_stat, AND_NOK);
+} END_TEST
+
+// test: da_getNumElements(darr, stat) -- DELETE 1
+START_TEST(test_da_getNumElements__args__darr__stat) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    ck_assert_ptr_null(da_delete(darr, 47));
+
+    int8_t get_num_elements_stat = AND_NOK;
+    ck_assert_int_eq(da_getNumElements(NULL, &get_num_elements_stat), AND_ZERO);
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+// test: da_getNumElements(darr, stat) -- INSERT 3
+START_TEST(test_da_getNumElements__args__darr__stat__INS_3) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    int element = 67;
+    ck_assert_int_eq(da_insert(darr, &element, 12, 0), AND_OK);
+    element = 45;
+    ck_assert_int_eq(da_insert(darr, &element, 67, 0), AND_OK);
+    element = -90;
+    ck_assert_int_eq(da_insert(darr, &element, 33, 0), AND_OK);
+
+    int8_t get_num_elements_stat = AND_NOK;
+    ck_assert_int_eq(da_getNumElements(NULL, &get_num_elements_stat), 3);
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+// test: da_getNumElements(darr, stat) -- INSERT 2, DELETE 2, INSERT 1
+START_TEST(test_da_getNumElements__args__darr__stat__INS_2_DEL_2_INS_1) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    int element = 67;
+    ck_assert_int_eq(da_insert(darr, &element, 12, 0), AND_OK);
+    element = -90;
+    ck_assert_int_eq(da_insert(darr, &element, 33, 0), AND_OK);
+
+    int8_t get_num_elements_stat = AND_NOK;
+    ck_assert_int_eq(da_getNumElements(NULL, &get_num_elements_stat), 2);
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+
+    ck_assert_ptr_nonnull(da_delete(darr, 33));
+    get_num_elements_stat = AND_NOK;
+    ck_assert_int_eq(da_getNumElements(NULL, &get_num_elements_stat), 1);
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+
+    ck_assert_ptr_nonnull(da_delete(darr, 12));
+    get_num_elements_stat = AND_NOK;
+    ck_assert_int_eq(da_getNumElements(NULL, &get_num_elements_stat), 0);
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+
+    ck_assert_ptr_null(da_delete(darr, 33));
+    get_num_elements_stat = AND_NOK;
+    ck_assert_int_eq(da_getNumElements(NULL, &get_num_elements_stat), 0);
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+    
+    element = -980;
+    ck_assert_int_eq(da_insert(darr, &element, 62, 0), AND_OK);
+
+    get_num_elements_stat = AND_NOK;
+    ck_assert_int_eq(da_getNumElements(NULL, &get_num_elements_stat), 1);
+    ck_assert_int_eq(get_num_elements_stat, AND_OK);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+
+Suite* da_getNumElements_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("GetNumElements");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_da_getNumElements__args__NULL__stat);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_da_getNumElements__args__darr__stat);
+    tcase_add_test(tc_success, test_da_getNumElements__args__darr__stat__INS_3);
+    tcase_add_test(tc_success, test_da_getNumElements__args__darr__stat__INS_2_DEL_2_INS_1);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [da_destroy(darrayptr_t, AND_BOOL)]
 // test: da_destroy(NULL, AND_FALSE)
 START_TEST(test_da_destroy__args__NULL__AND_FALSE) {
@@ -195,6 +296,7 @@ int main(int argc, char** argv) {
     int num_tests_failed;
     
     SRunner* suite_runner = srunner_create(da_create_suite());
+    srunner_add_suite(suite_runner, da_getNumElements_suite());
     srunner_add_suite(suite_runner, da_destroy_suite());
 
     if (argc == 1) {
