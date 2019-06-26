@@ -297,6 +297,47 @@ Suite* da_getMaxNumElements_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [da_getElementSize(darrayptr_t, int8_t*)]
+// test: da_getElementSize(NULL, stat)
+START_TEST(test_da_getElementSize__args__NULL__stat) {
+    int8_t get_element_size_stat = AND_OK;
+
+    ck_assert_int_eq(da_getElementSize(NULL, &get_element_size_stat), AND_ZERO);
+    ck_assert_int_eq(get_element_size_stat, AND_NOK);
+} END_TEST
+
+// test: da_getElementSize(darr, stat)
+START_TEST(test_da_getElementSize__args__darr__stat) {
+    darrayptr_t darr = da_create(0, sizeof(char*), 0, 0);
+
+    int8_t get_element_size_stat = AND_NOK;
+
+    ck_assert_int_eq(da_getElementSize(NULL, &get_element_size_stat), sizeof(char*));
+    ck_assert_int_eq(get_element_size_stat, AND_OK);
+} END_TEST
+
+
+Suite* da_getElementSize_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("GetElementSize");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_da_getElementSize__args__NULL__stat);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_da_getElementSize__args__darr__stat);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [da_destroy(darrayptr_t, AND_BOOL)]
 // test: da_destroy(NULL, AND_FALSE)
 START_TEST(test_da_destroy__args__NULL__AND_FALSE) {
@@ -364,6 +405,7 @@ int main(int argc, char** argv) {
     SRunner* suite_runner = srunner_create(da_create_suite());
     srunner_add_suite(suite_runner, da_getNumElements_suite());
     srunner_add_suite(suite_runner, da_getMaxNumElements_suite());
+    srunner_add_suite(suite_runner, da_getElementSize_suite());
     srunner_add_suite(suite_runner, da_destroy_suite());
 
     if (argc == 1) {
