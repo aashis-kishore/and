@@ -122,8 +122,17 @@ size_t da_getGrowthFactor(darrayptr_t darr, int8_t* status) {
 }
 
 size_t da_getLoadFactor(darrayptr_t darr, int8_t* status) {
-    // TODO
-    return AND_ZERO;
+    if (!darr) {
+        if (status)
+            *status = AND_NOK;
+        AND_PRINT_ERR("da_loadFactor", "Invalid address as argument")
+        return AND_ZERO;
+    }
+
+    if (status)
+        *status = AND_OK;
+        
+    return darr->load_factor;
 }
 
 int8_t da_insert(darrayptr_t darr, void* element, size_t index, size_t element_size) {
