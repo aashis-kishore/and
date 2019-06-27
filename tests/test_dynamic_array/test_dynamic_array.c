@@ -632,6 +632,60 @@ Suite* da_delete_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [da_get(darrayptr_t, size_t)]
+// test: da_get(NULL, 55)
+START_TEST(test_da_get__args__NULL__55) {
+    ck_assert_ptr_null(da_get(NULL, 55));
+} END_TEST
+
+// test: da_get(darr, 67)
+START_TEST(test_da_get__args__darr__67) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    ck_assert_ptr_null(da_get(darr, 67));
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+// test: da_get(darr, 100)
+START_TEST(test_da_get__args__darr__100) {
+    darrayptr_t darr = da_create(0, sizeof(char*), 0, 0);
+
+    char* str = "test string";
+    ck_assert_int_eq(da_insert(darr, str, 100, strlen(str)+1), AND_OK);
+    
+    void* returned_str = and_getElement(da_get(darr, 100), char*);
+    ck_assert_ptr_nonnull(returned_str);
+    ck_assert_str_eq(returned_str, str);
+
+    free(returned_str);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+
+Suite* da_get_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("Get");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_da_get__args__NULL__55);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_da_get__args__darr__67);
+    tcase_add_test(tc_success, test_da_get__args__darr__100);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [da_destroy(darrayptr_t, AND_BOOL)]
 // test: da_destroy(NULL, AND_FALSE)
 START_TEST(test_da_destroy__args__NULL__AND_FALSE) {
@@ -704,6 +758,7 @@ int main(int argc, char** argv) {
     srunner_add_suite(suite_runner, da_getLoadFactor_suite());
     srunner_add_suite(suite_runner, da_insert_suite());
     srunner_add_suite(suite_runner, da_delete_suite());
+    srunner_add_suite(suite_runner, da_get_suite());
     srunner_add_suite(suite_runner, da_destroy_suite());
 
     if (argc == 1) {
