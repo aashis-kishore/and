@@ -565,6 +565,73 @@ Suite* da_insert_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [da_delete(darrayptr_t, size_t)]
+// test: da_delete(NULL, 11)
+START_TEST(test_da_delete__args__NULL__11) {
+    ck_assert_ptr_null(da_delete(NULL, 11));
+} END_TEST
+
+// test: da_delete(darr, 78)
+START_TEST(test_da_delete__args__darr__78) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    ck_assert_ptr_null(da_delete(darr, 78));
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+// test: da_delete(darr, 99) -- INSERT 1, DELETE 1
+START_TEST(test_da_delete__args__darr__99__INS_1_DEL_1) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    int element = 45;
+    ck_assert_int_eq(da_insert(darr, &element, 99, 0), AND_OK);
+    ck_assert_ptr_nonnull(da_delete(darr, 99));
+    ck_assert_ptr_null(da_delete(darr, 99));
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+// test: da_delete(darr, 101) -- MEM ALLOCED
+START_TEST(test_da_delete__args__darr__101__MEM_ALLOCED) {
+    darrayptr_t darr = da_create(0, sizeof(char*), 0, 0);
+
+    char* str = "test string";
+    ck_assert_int_eq(da_insert(darr, str, 101, strlen(str)+1), AND_OK);
+    
+    void* returned_str = and_getElement(da_delete(darr, 101), char*);
+    ck_assert_ptr_nonnull(returned_str);
+    ck_assert_str_eq(returned_str, str);
+
+    free(returned_str);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+
+Suite* da_delete_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("Delete");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_da_delete__args__NULL__11);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_da_delete__args__darr__78);
+    tcase_add_test(tc_success, test_da_delete__args__darr__99__INS_1_DEL_1);
+    tcase_add_test(tc_success, test_da_delete__args__darr__101__MEM_ALLOCED);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [da_destroy(darrayptr_t, AND_BOOL)]
 // test: da_destroy(NULL, AND_FALSE)
 START_TEST(test_da_destroy__args__NULL__AND_FALSE) {
@@ -636,6 +703,7 @@ int main(int argc, char** argv) {
     srunner_add_suite(suite_runner, da_getGrowthFactor_suite());
     srunner_add_suite(suite_runner, da_getLoadFactor_suite());
     srunner_add_suite(suite_runner, da_insert_suite());
+    srunner_add_suite(suite_runner, da_delete_suite());
     srunner_add_suite(suite_runner, da_destroy_suite());
 
     if (argc == 1) {
