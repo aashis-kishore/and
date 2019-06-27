@@ -497,6 +497,74 @@ Suite* da_getLoadFactor_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [da_insert(darrayptr_t, void*, size_t, size_t)]
+// test: da_insert(NULL, element, 12, 0)
+START_TEST(test_da_insert__args__NULL__element__12__0) {
+    int element = -78;
+
+    ck_assert_int_eq(da_insert(NULL, &element, 12, 0), AND_NOK);
+} END_TEST
+
+// test: da_insert(darr, NULL, 34, 0)
+START_TEST(test_da_insert__args__darr__NULL__34__0) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    ck_assert_int_eq(da_insert(darr, NULL, 34, 0), AND_NOK);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+// test: da_insert(darr, element, 46, 0)
+START_TEST(test_da_insert__args__darr__element__46__0) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    int element = -101;
+
+    ck_assert_int_eq(da_insert(darr, &element, 46, 0), AND_OK);
+    ck_assert_int_eq(and_getElement(da_get(darr, 46), int), element);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+// test: da_insert(darr, element, 52, sizeof(char*))
+START_TEST(test_da_insert__args__darr__element__52__sizeof_char_ptr) {
+    darrayptr_t darr = da_create(0, sizeof(char*), 0, 0);
+
+    char* str = "name is ....";
+
+    ck_assert_int_eq(da_insert(darr, str, 52, strlen(str)+1), AND_OK);
+    void* returned_str = and_getElement(da_get(darr, 52), char*);
+    ck_assert_str_eq(returned_str, str);
+
+    free(returned_str);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+
+Suite* da_insert_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("Insert");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_da_insert__args__NULL__element__12__0);
+    tcase_add_test(tc_failure, test_da_insert__args__darr__NULL__34__0);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_da_insert__args__darr__element__46__0);
+    tcase_add_test(tc_success, test_da_insert__args__darr__element__52__sizeof_char_ptr);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [da_destroy(darrayptr_t, AND_BOOL)]
 // test: da_destroy(NULL, AND_FALSE)
 START_TEST(test_da_destroy__args__NULL__AND_FALSE) {
@@ -567,6 +635,7 @@ int main(int argc, char** argv) {
     srunner_add_suite(suite_runner, da_getElementSize_suite());
     srunner_add_suite(suite_runner, da_getGrowthFactor_suite());
     srunner_add_suite(suite_runner, da_getLoadFactor_suite());
+    srunner_add_suite(suite_runner, da_insert_suite());
     srunner_add_suite(suite_runner, da_destroy_suite());
 
     if (argc == 1) {
