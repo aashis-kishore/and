@@ -65,6 +65,19 @@ darrayptr_t da_create(size_t max_num_elements, size_t element_size, uint8_t grow
     return darr;
 }
 
+size_t da_getNumElements(darrayptr_t darr, int8_t* status) {
+    if (!darr) {
+        if (status)
+            *status = AND_NOK;
+        return AND_ZERO;
+    }
+
+    if (status)
+        *status = AND_OK;
+        
+    return darr->num_elements;
+}
+
 size_t da_getMaxNumElements(darrayptr_t darr, int8_t* status) {
     // TODO
     return AND_ZERO;
