@@ -414,6 +414,81 @@ Suite* da_getGrowthFactor_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [da_getLoadFactor(darrayptr_t, int8_t*)]
+// test: da_getLoadFactor(NULL, stat)
+START_TEST(test_da_getLoadFactor__args__NULL__stat) {
+    int8_t get_load_factor_stat = AND_OK;
+
+    ck_assert_int_eq(da_getLoadFactor(NULL, &get_load_factor_stat), AND_ZERO);
+    ck_assert_int_eq(get_load_factor_stat, AND_NOK);
+} END_TEST
+
+// test: da_getLoadFactor(darr, stat)
+START_TEST(test_da_getLoadFactor__args__darr__stat) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    int8_t get_load_factor_stat = AND_NOK;
+
+    ck_assert_int_eq(da_getLoadFactor(NULL, &get_load_factor_stat), DA_DEFAULT_LOAD_FACTOR);
+    ck_assert_int_eq(get_load_factor_stat, AND_OK);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+// test: da_getLoadFactor(darr, stat) -- NON-DEFAULT LOAD FACTOR
+START_TEST(test_da_getLoadFactor__args__darr__stat__NON_DEFAULT) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 45);
+
+    int8_t get_load_factor_stat = AND_NOK;
+
+    ck_assert_int_eq(da_getLoadFactor(NULL, &get_load_factor_stat), 45);
+    ck_assert_int_eq(get_load_factor_stat, AND_OK);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+// test: da_getLoadFactor(darr, stat) -- RESIZE
+START_TEST(test_da_getLoadFactor__args__darr__stat__RESIZE) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 25);
+
+    int8_t get_load_factor_stat = AND_NOK;
+
+    ck_assert_int_eq(da_getLoadFactor(NULL, &get_load_factor_stat), 25);
+    ck_assert_int_eq(get_load_factor_stat, AND_OK);
+
+    for (int i=0; i<8; i++)
+        ck_assert_int_eq(da_insert(darr, &i, i, 0), AND_OK);
+
+    int8_t get_max_num_elements = AND_OK;
+    ck_assert_int_eq(da_getMaxNumElements(darr, &get_max_num_elements), AND_OK);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+
+Suite* da_getLoadFactor_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("GetLoadFactor");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_da_getLoadFactor__args__NULL__stat);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_da_getLoadFactor__args__darr__stat);
+    tcase_add_test(tc_success, test_da_getLoadFactor__args__darr__stat__NON_DEFAULT);
+    tcase_add_test(tc_success, test_da_getLoadFactor__args__darr__stat__RESIZE);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [da_destroy(darrayptr_t, AND_BOOL)]
 // test: da_destroy(NULL, AND_FALSE)
 START_TEST(test_da_destroy__args__NULL__AND_FALSE) {
@@ -483,6 +558,7 @@ int main(int argc, char** argv) {
     srunner_add_suite(suite_runner, da_getMaxNumElements_suite());
     srunner_add_suite(suite_runner, da_getElementSize_suite());
     srunner_add_suite(suite_runner, da_getGrowthFactor_suite());
+    srunner_add_suite(suite_runner, da_getLoadFactor_suite());
     srunner_add_suite(suite_runner, da_destroy_suite());
 
     if (argc == 1) {
