@@ -69,6 +69,7 @@ size_t da_getNumElements(darrayptr_t darr, int8_t* status) {
     if (!darr) {
         if (status)
             *status = AND_NOK;
+        AND_PRINT_ERR("da_getNumElements", "Invalid address as argument")
         return AND_ZERO;
     }
 
@@ -82,6 +83,7 @@ size_t da_getMaxNumElements(darrayptr_t darr, int8_t* status) {
     if (!darr) {
         if (status)
             *status = AND_NOK;
+        AND_PRINT_ERR("da_getMaxNumElements", "Invalid address as argument")
         return AND_ZERO;
     }
 
