@@ -437,7 +437,7 @@ START_TEST(test_da_getLoadFactor__args__darr__stat) {
 
     int8_t get_load_factor_stat = AND_NOK;
 
-    ck_assert_int_eq(da_getLoadFactor(NULL, &get_load_factor_stat), DA_DEFAULT_LOAD_FACTOR);
+    ck_assert_int_eq(da_getLoadFactor(darr, &get_load_factor_stat), DA_DEFAULT_LOAD_FACTOR);
     ck_assert_int_eq(get_load_factor_stat, AND_OK);
 
     da_destroy(darr, AND_FALSE);
@@ -449,7 +449,7 @@ START_TEST(test_da_getLoadFactor__args__darr__stat__NON_DEFAULT) {
 
     int8_t get_load_factor_stat = AND_NOK;
 
-    ck_assert_int_eq(da_getLoadFactor(NULL, &get_load_factor_stat), 45);
+    ck_assert_int_eq(da_getLoadFactor(darr, &get_load_factor_stat), 45);
     ck_assert_int_eq(get_load_factor_stat, AND_OK);
 
     da_destroy(darr, AND_FALSE);
@@ -461,7 +461,7 @@ START_TEST(test_da_getLoadFactor__args__darr__stat__RESIZE) {
 
     int8_t get_load_factor_stat = AND_NOK;
 
-    ck_assert_int_eq(da_getLoadFactor(NULL, &get_load_factor_stat), 25);
+    ck_assert_int_eq(da_getLoadFactor(darr, &get_load_factor_stat), 25);
     ck_assert_int_eq(get_load_factor_stat, AND_OK);
 
     for (int i=0; i<8; i++)
