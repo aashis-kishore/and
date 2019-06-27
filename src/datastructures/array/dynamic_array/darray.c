@@ -108,8 +108,17 @@ size_t da_getElementSize(darrayptr_t darr, int8_t* status) {
 }
 
 size_t da_getGrowthFactor(darrayptr_t darr, int8_t* status) {
-    // TODO
-    return AND_ZERO;
+    if (!darr) {
+        if (status)
+            *status = AND_NOK;
+        AND_PRINT_ERR("da_growthFactor", "Invalid address as argument")
+        return AND_ZERO;
+    }
+
+    if (status)
+        *status = AND_OK;
+        
+    return darr->growth_factor;
 }
 
 size_t da_getLoadFactor(darrayptr_t darr, int8_t* status) {
