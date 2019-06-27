@@ -686,6 +686,85 @@ Suite* da_get_suite(void) {
 // ==================================================================================================
 
 
+// ================================================================================================== [da_swap(darrayptr_t, size_t, size_t)]
+// test: da_swap(NULL, 23, 56)
+START_TEST(test_da_swap__args__NULL__23__56) {
+    ck_assert_ptr_null(da_swap(NULL, 23, 56));
+} END_TEST
+
+// test: da_swap(darr, 60, 60)
+START_TEST(test_da_swap__args__darr__60__60) {
+    darrayptr_t darr = da_create(0, sizeof(char*), 0, 0);
+
+    char* str = "test string";
+
+    ck_assert_int_eq(da_insert(darr, str, 60, strlen(str)+1), AND_OK);
+
+    void* returned_str = and_getElement(da_get(darr, 60), char*);
+    ck_assert_ptr_nonnull(returned_str);
+    ck_assert_str_eq(returned_str, str);
+
+    free(returned_str);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+// test: da_swap(darr, 127, 190)
+START_TEST(test_da_swap__args__darr__127__190) {
+    darrayptr_t darr = da_create(0, sizeof(int), 0, 0);
+
+    int element1 = 78, element2 = 87;
+    ck_assert_int_eq(da_insert(darr, &element1, 127, 0), AND_OK);
+    ck_assert_int_eq(da_insert(darr, &element2, 190, 0), AND_OK);
+
+    void* element = da_swap(darr, 127, 190);
+    ck_assert_ptr_nonnull(element);
+    ck_assert_int_eq(and_getElement(element, int), element1);
+
+    da_destroy(darr, AND_FALSE);
+} END_TEST
+
+// test: da_swap(darr, 255, 0)
+START_TEST(test_da_swap__args__darr__255__0) {
+    darrayptr_t darr = da_create(0, sizeof(char*), 0, 0);
+
+    char *str1 = "test str1", *str2 = "test str2";
+    ck_assert_int_eq(da_insert(darr, str1, 255, strlen(str1)+1), AND_OK);
+    ck_assert_int_eq(da_insert(darr, str2, 0, strlen(str2)+1), AND_OK);
+
+    void* str = and_getElement(da_swap(darr, 255, 0), char*);
+    ck_assert_ptr_nonnull(str);
+    ck_assert_str_eq(str, str1);
+
+    free(str1);
+
+    da_destroy(darr, AND_TRUE);
+} END_TEST
+
+
+Suite* da_swap_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("Swap");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_da_swap__args__NULL__23__56);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_success, test_da_swap__args__darr__60__60);
+    tcase_add_test(tc_success, test_da_swap__args__darr__127__190);
+    tcase_add_test(tc_success, test_da_swap__args__darr__255__0);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
+
+// ==================================================================================================
+
+
 // ================================================================================================== [da_destroy(darrayptr_t, AND_BOOL)]
 // test: da_destroy(NULL, AND_FALSE)
 START_TEST(test_da_destroy__args__NULL__AND_FALSE) {
@@ -759,6 +838,7 @@ int main(int argc, char** argv) {
     srunner_add_suite(suite_runner, da_insert_suite());
     srunner_add_suite(suite_runner, da_delete_suite());
     srunner_add_suite(suite_runner, da_get_suite());
+    srunner_add_suite(suite_runner, da_swap_suite());
     srunner_add_suite(suite_runner, da_destroy_suite());
 
     if (argc == 1) {
