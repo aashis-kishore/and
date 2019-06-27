@@ -248,6 +248,8 @@ START_TEST(test_da_getMaxNumElements__args__darr__stat) {
 
     ck_assert_int_eq(da_getMaxNumElements(darr, &get_max_num_elements_stat), DA_DEFAULT_SIZE);
     ck_assert_int_eq(get_max_num_elements_stat, AND_OK);
+
+    da_destroy(darr, AND_FALSE);
 } END_TEST
 
 // test: da_getMaxNumElements(darr, stat) -- NON-DEFAULT SIZE
@@ -258,6 +260,8 @@ START_TEST(test_da_getMaxNumElements__args__darr__stat__NON_DEFAULT_SIZE) {
 
     ck_assert_int_eq(da_getMaxNumElements(darr, &get_max_num_elements_stat), 100);
     ck_assert_int_eq(get_max_num_elements_stat, AND_OK);
+
+    da_destroy(darr, AND_FALSE);
 } END_TEST
 
 // test: da_getMaxNumElements(darr, stat) -- RESIZE
@@ -271,6 +275,8 @@ START_TEST(test_da_getMaxNumElements__args__darr__stat__RESIZE) {
 
     ck_assert_int_eq(da_getMaxNumElements(darr, &get_max_num_elements_stat), 108);
     ck_assert_int_eq(get_max_num_elements_stat, AND_OK);
+
+    da_destroy(darr, AND_FALSE);
 } END_TEST
 
 
