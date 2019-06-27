@@ -318,8 +318,10 @@ START_TEST(test_da_getElementSize__args__darr__stat) {
 
     int8_t get_element_size_stat = AND_NOK;
 
-    ck_assert_int_eq(da_getElementSize(NULL, &get_element_size_stat), sizeof(char*));
+    ck_assert_int_eq(da_getElementSize(darr, &get_element_size_stat), sizeof(char*));
     ck_assert_int_eq(get_element_size_stat, AND_OK);
+
+    da_destroy(darr, AND_FALSE);
 } END_TEST
 
 
