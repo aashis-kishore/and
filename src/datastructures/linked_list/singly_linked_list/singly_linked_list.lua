@@ -7,15 +7,6 @@ project "singly_linked_list"
 
     includedirs {
         "%{wks.location}/src/and/",
-        "%{wks.location}/build/%{cfg.buildcfg}/lib/singly_linked_list/include/",
-    }
-
-    libdirs {
-        "%{wks.location}/build/%{cfg.buildcfg}/lib/singly_linked_list/lib/",
-    }
-
-    links {
-        "singly_linked_list",
     }
 
     filter "configurations:debug"
