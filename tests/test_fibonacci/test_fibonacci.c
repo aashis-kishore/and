@@ -120,7 +120,7 @@ Suite* fibTab_suite(void) {
     Suite* suite;
     TCase *tc_failure, *tc_success;
 
-    suite = suite_create("FibRec");
+    suite = suite_create("FibTab");
 
     tc_failure = tcase_create("Failure");
     tcase_add_test(tc_failure, test_fibTab__args__4__0);
