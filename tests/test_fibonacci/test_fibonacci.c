@@ -140,6 +140,46 @@ Suite* fibTab_suite(void) {
 
 
 // ================================================================================================== [fibMem(size_t, size_t)]
+// test: fibMem(4, 0)
+START_TEST(test_fibMem__args__4__0) {
+    ck_assert_int_eq(fibMem(4, 0), AND_NOK);
+} END_TEST
+
+// test: fibMem(0, 0)
+START_TEST(test_fibMem__args__0__0) {
+    ck_assert_int_eq(fibMem(0, 0), AND_OK);
+} END_TEST
+
+// test: fibMem(0, 15)
+START_TEST(test_fibMem__args__0__15) {
+    ck_assert_int_eq(fibMem(0, 15), AND_OK);
+} END_TEST
+
+// test: fibMem(10, 20)
+START_TEST(test_fibMem__args__10__20) {
+    ck_assert_int_eq(fibMem(10, 20), AND_OK);
+} END_TEST
+
+
+Suite* fibMem_suite(void) {
+    Suite* suite;
+    TCase *tc_failure, *tc_success;
+
+    suite = suite_create("FibMem");
+
+    tc_failure = tcase_create("Failure");
+    tcase_add_test(tc_failure, test_fibMem__args__4__0);
+
+    tc_success = tcase_create("Success");
+    tcase_add_test(tc_failure, test_fibMem__args__0__0);
+    tcase_add_test(tc_failure, test_fibMem__args__0__15);
+    tcase_add_test(tc_failure, test_fibMem__args__10__20);
+
+    suite_add_tcase(suite, tc_failure);
+    suite_add_tcase(suite, tc_success);
+
+    return suite;
+}
 
 // ==================================================================================================
 
@@ -150,6 +190,7 @@ int main(int argc, char** argv) {
     SRunner* suite_runner = srunner_create(fibIter_suite());
     srunner_add_suite(suite_runner, fibRec_suite());
     srunner_add_suite(suite_runner, fibTab_suite());
+    srunner_add_suite(suite_runner, fibMem_suite());
 
     if (argc == 1) {
         srunner_run_all(suite_runner, CK_NORMAL);
